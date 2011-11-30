@@ -189,6 +189,8 @@ $(function () {
      });
      // refresh graph every 15 min
      setTimeout(fetchGraphData, 900000);
+     // refresh whole page every 1h
+     setTimeout(function(){window.location.reload(true)}, 3600000);
   }
   // ====================================
   // run all function

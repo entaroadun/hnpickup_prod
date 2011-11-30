@@ -56,9 +56,15 @@ to the far left
 */
 #ads {
   margin: 0;
-  padding: 0;
+  padding: 1px;
   margin-top: 10%;
+  width: 15%;
+  height: 25%;
   float: left;
+  margin-left: 1px;
+  /* background-color: #E1DDDA; */
+  /* border: 1px solid #BABAB9; */
+  text-align: left;
 }
 /* 
 This part if CSS defines 
