@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Hacker News Story Pickup Ratio</title>
+    <meta name='description' content='When is good time to post on Hacker News? Use Pickup Ratio Recommendation System. Time series analysis and data mining.' />
+    <link type='text/css' rel='stylesheet' href='/css/smoothness/jquery-ui-1.8.16.custom.css' />
+    <link type='text/css' rel='stylesheet' href='/css/main.css' />
+    <link rel='shortcut icon' href='/favicon.ico' />
+    <script language='javascript' type='text/javascript' src='/js/jquery/jquery-1.7.min.js'></script>
+    <script language='javascript' type='text/javascript' src='/js/jquery/jquery-ui-1.8.16.custom.min.js'></script>
+    <script language='javascript' type='text/javascript' src='/js/flot/jquery.flot.js'></script>
+    <script language='javascript' type='text/javascript' src='/js/quickflip/jquery.quickflip.min.js'></script>
+    <script language='javascript' type='text/javascript' src='/js/visualize.js'></script>
+    <script type='text/javascript'>
+      // gather statistics on who and how looks at your web page
+      // store it in google analytics web service
+      var _gaq = _gaq || [];
+      // everyone has their own account number
+      _gaq.push(['_setAccount', 'UA-26837634-1']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+         var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+         ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	 // google analytics doesn't track viewport
+	 // so we have to do it for them
+         var viewportWidth=$(window).width();
+         _gaq.push(['_trackEvent', 'Viewport Dimensions', 'Viewport Dimensions Initial', viewportWidth+'x'+$(window).height(), viewportWidth, true]);
+         // track viewport dimensions being changed by resize (throttled)
+         var gaResizeCompleteHl;
+         $(window).resize(function(){
+            clearTimeout(gaResizeCompleteHl);
+            gaResizeCompleteHl = setTimeout(function(){
+              var viewportWidth=$(window).width();
+              _gaq.push(['_trackEvent', 'Viewport Dimensions', 'Viewport Dimensions Resized', viewportWidth+'x'+$(window).height(), viewportWidth, true]);
+            },1000);
+         });
+       })();
+    </script>
+  </head>
+  <body>
+  <!-- the web page has one hidden feature on purpose so people don't overload my google engine instances -->
+  <div id='main'>
+    <a id='title' href='/hnpickup_ratio_visual_analysis.png'>Hacker News Story Pickup Ratio</a>
+    <!-- an ad could go here -->
+    <div id='ads'>
+    </div>
+    <!-- in order to save some real estate for the help info we will use flip techinque to switch between "help" and "graph" using jQuery plugin -->
+    <div id='flip'>
+      <div id='graph'>
+        <!-- sliders -->
+        <div id='trim'><div>TRIMMING</div></div>
+        <div id='smooth'><div>SMOOTHING</div></div>
+        <!-- I tried to have here a message: 'Please wait', but then it doesn't look good when flipping -->
+        <div id='plot' class='cta'></div>  
+        <!-- y axes labels  -->
+        <div id='y_label_1'>Averge score</div>
+        <div id='y_label_2'>Pickup ratio</div>
+	<!-- just for show, so people know that they can click on the graph and get help info -->
+	<div id='helper' class='cta'><b>?</b></div>
+      </div>
+      <div id='help'>
+        <div id='definitions' class='cta'>
+	  Some good stories posted on Hacker News are upvoted while some are not. Is it always the story or is the time when it's posted? The graph should tell. It follows these definitions:
+	  <ul>
+	    <li><b>Newest stories top average score</b> - is an average of six most voted stories on the HN <b>newest</b> page; indirectly, it measures the number of competing stories or the number of story submitters. </li>
+	    <li><b>News stories bottom average score</b> - is an average of six least voted stories on the HN <b>news</b> page; indirectly, it measures the number of fresh stories or the number of story upvoters. </li>
+	    <li><b>Pickup ratio</b> - is equal to <b>Newest stories top average score</b> divided by <b>News stories bottom average score</b>; indirectly, it measures what is your chance of getting from <b>newest</b> to <b>news</b> page; you want a lot of upvoters to be upvoting and very few submitters to be submitting. </li>
+	    <li><b>Now it's ... time</b> - gives four recommendations whether now is good time to submit or not. There are four possible values mapped to top four <b>pickup ratio</b> quantiles: <b>very good</b>, <b>good</b>, <b>so-so</b>, and <b>bad</b>. </li>
+	  </ul>
+	  This small web application is an amalgam of ETL, data mining, and visualization processes with focus on time series analysis. Data from other websites is gathered, enhanced, and presented as decision support tool. Source code will be soon available from <a id='github' href='https://github.com/entaroadun/hnpickup' onclick='document.location.href=this.href'>GitHub</a>.
+        </div>
+	<!-- "go back" button - just for show so people know how to go back (flip) --> 
+	<div id='grapher' class='cta'><b>&lt;&lt;</b></div>
+      </div>
+    </div>
+    <!-- graph legend -->
+    <div id='legend' class='cta'></div>
+    <!-- recommendation systm goes here -->
+    <a id='recommendation' href='#'>Now it's <span id='timing'>...</span> time to <span id='submit'>submit</span> a story</a>
+    <br/>
+    <!-- hacker news button to show how many points your app got and also a user can add karma by clicking on it -->
+    <span id='hnpoints'>This app got <iframe id='hnbutton' src='http://hnapiwrapper.herokuapp.com/button.html?width=120&amp;url=http://hnpickup.appspot.com/&amp;title=When is good time to submit a story on HN?' frameborder='0' height='22' width='90'></iframe> on HN.</span>
+  </div>
+  </body>
+</html>

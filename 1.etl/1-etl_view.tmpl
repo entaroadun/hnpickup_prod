@@ -1,0 +1,38 @@
+[
+{ 
+  "label": "Newest stories top average score", 
+  "data": [
+  {% for data in data_newest %}
+     {{ data }} 
+     {% if not forloop.last %} 
+     , 
+     {% endif %}
+  {% endfor %}
+  ], 
+  "yaxis": 1
+},
+{ 
+  "label": "News stories bottom average score", 
+  "data": [
+  {% for data in data_news %}
+     {{ data }} 
+     {% if not forloop.last %} 
+     , 
+     {% endif %}
+  {% endfor %}
+  ],
+  "yaxis": 1
+},
+{
+  "label": "Pickup ratio",
+  "data": [
+  {% for data in pickup_ratio %}
+     {{ data }} 
+     {% if not forloop.last %} 
+     , 
+     {% endif %}
+  {% endfor %}
+  ], 
+  "yaxis": 2 
+}
+]
