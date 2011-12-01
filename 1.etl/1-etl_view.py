@@ -58,6 +58,7 @@ class HNSCORE(db.Model):
   score_news = db.FloatProperty()
   score_newest = db.FloatProperty()
   pickup_ratio = db.FloatProperty()
+  story_id = db.IntegerProperty()
 
 ## =================================
 ## == sometimes we want to get the
@@ -73,6 +74,7 @@ class MainHandler(webapp.RequestHandler):
     data_news = []
     data_newest = []
     pickup_ratio = []
+    story_id = []
     str_ndata_elements = self.request.get('ndata_elements')
     ndata_elements = 48 ## this is equal to 12h = 12 * 4 * 15min
 ## ------------------------
@@ -96,12 +98,14 @@ class MainHandler(webapp.RequestHandler):
       if i < len(results):
         data_news.append([int(results[i].etime),float(results[i].score_news)])
         data_newest.append([int(results[i].etime),float(results[i].score_newest)])
-        pickup_ratio.append([int(results[i].etime),float(results[i].pickup_ratio)]) ## the difference tells us if it's good time or not 
+        pickup_ratio.append([int(results[i].etime),float(results[i].pickup_ratio)])
+        story_id.append([int(results[i].etime),int(results[i].story_id or 0)])
 ## --  plugin the data into a tamplate variable
     template_values = {
       'data_news': data_news,
       'data_newest': data_newest,
-      'pickup_ratio': pickup_ratio
+      'pickup_ratio': pickup_ratio,
+      'story_id': story_id
     }
     path = os.path.join(os.path.dirname(__file__), '1-etl_view.tmpl')
     self.response.out.write(template.render(path, template_values))

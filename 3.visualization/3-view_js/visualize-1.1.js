@@ -40,7 +40,9 @@ $(function () {
   var OPTIONS = {};
   // Global graph data
   var SERIES = {};
-  // Global data smoothing parameter
+  // Global data about best stories
+  var STORIES = {};
+  // Global data smoothing parameters
   var SMOOTH = 1;
   var MAX_SMOOTH = 5;
   // Global data trimming parameter
@@ -127,7 +129,6 @@ $(function () {
          legend: { container: $('#legend') },
 	 grid: { markings: MARKINGS }
       };
-     
       // now we are ready to load the graph
       // ("time sensitive" data)
       fetchGraphData();
@@ -153,6 +154,7 @@ $(function () {
        // to make actual recommendation.
        // This is most important part of the DM process.
        // The graph is just for shows.
+       STORIES = series.pop();
        SERIES = series;
        data_length = SERIES[0].data.length - 1;
        timing_diff = SERIES[2].data[data_length][1];

@@ -34,5 +34,16 @@
   {% endfor %}
   ], 
   "yaxis": 2 
+},
+{
+  "label": "Story ID",
+  "data": [
+  {% for data in story_id %}
+     {{ data }} 
+     {% if not forloop.last %} 
+     , 
+     {% endif %}
+  {% endfor %}
+  ] 
 }
 ]

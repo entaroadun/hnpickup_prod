@@ -33,6 +33,7 @@ from google.appengine.ext.webapp.util import run_wsgi_app
 from google.appengine.ext import db
 from google.appengine.api import urlfetch
 from google.appengine.api.urlfetch import DownloadError 
+from operator import itemgetter
 
 # Read more at
 # http://code.google.com/appengine/docs/python/tools/libraries.html#Django
@@ -71,6 +72,7 @@ class HNSCORE(db.Model):
   score_news = db.FloatProperty()
   score_newest = db.FloatProperty()
   pickup_ratio = db.FloatProperty()
+  story_id = db.IntegerProperty()
 
 ## =================================
 ## == Web page that does all the ETL
@@ -95,15 +97,15 @@ class MainHandler(webapp.RequestHandler):
     result = urlfetch.fetch(url='https://news.ycombinator.com/newest',deadline=60)
     if result.status_code == 200:
       txt_data = result.content
-      for m in re.finditer(r"(\d+) points?</span> by (.+?) (\d+) (minutes?|hours?|days?) ago",txt_data):
-        data_newest.append(int(m.group(1)))
+      for m in re.finditer(r"(\d+) points?</span>.+?<a href=.item\?id=(\d+).>",txt_data):
+        data_newest.append((int(m.group(1)),int(m.group(2))))
         html_data.append({'col1':'newest','col2':m.group(1),'col3':m.group(2)})
-      data_newest.sort(reverse=True)
+      data_newest = sorted(data_newest, key=itemgetter(0), reverse=True)
       data_newest_num = 0
       data_newest_den = 0
       if len(data_newest) >= N_POINT_AVERAGE:
         for i in range(0,N_POINT_AVERAGE):
-          data_newest_num += data_newest[i]
+          data_newest_num += data_newest[i][0]
           data_newest_den += 1
       if data_newest_den: 
         data_newest_score = float(data_newest_num)/float(data_newest_den)  
@@ -118,31 +120,42 @@ class MainHandler(webapp.RequestHandler):
     result = urlfetch.fetch(url='https://news.ycombinator.com/news',deadline=60)
     if result.status_code == 200:
       txt_data = result.content
-      for m in re.finditer(r"(\d+) points?</span> by (.+?) (\d+) (minutes?|hours?|days?) ago",txt_data):
-        data_news.append(int(m.group(1)))
+      for m in re.finditer(r"(\d+) points?</span>.+?<a href=.item\?id=(\d+).>",txt_data):
+        data_news.append((int(m.group(1)),int(m.group(2))))
         html_data.append({'col1':'news','col2':m.group(1),'col3':m.group(2)})
-      data_news.sort()  
+      data_news = sorted(data_news, key=itemgetter(0))
       data_news_num = 0
       data_news_den = 0
       if len(data_news) >= N_POINT_AVERAGE:
         for i in range(0,N_POINT_AVERAGE):
-          data_news_num += data_news[i]
+          data_news_num += data_news[i][0]
           data_news_den += 1
       if data_news_den: 
         data_news_score = float(data_news_num)/float(data_news_den)  
+## ---------------------------
+## -- Figure out if the best
+## -- newest story matches
+## -- best news story
+      story_id = int(0)
+      if len(data_news) >= N_POINT_AVERAGE and len(data_newest) >= N_POINT_AVERAGE:
+	for i in range(0,len(data_news)):
+	  if data_news[i][1] == data_newest[0][1]:
+	    story_id = data_newest[0][1]
+	    break
 ## ---------------------------
 ## -- if we have results from
 ## -- both sources then lets 
 ## -- put it in a database
     if data_newest_score and data_news_score:
       etime_now = int(time.time()*1000)
-      hntime = HNSCORE(etime=etime_now,score_news=data_news_score,score_newest=data_newest_score,pickup_ratio=data_newest_score/data_news_score)
+      hntime = HNSCORE(etime=etime_now,score_news=data_news_score,score_newest=data_newest_score,pickup_ratio=data_newest_score/data_news_score,story_id=story_id)
       hntime.put()
       html_data.append({'col1':'timestamp','col2':'newest','col3':'news'})
       html_data.append({'col1':etime_now,'col2':data_newest_score,'col3':data_news_score})
       html_data.append({'col1':'lenghts','col2':len(data_newest),'col3':len(data_news)})
       html_data.append({'col1':'denominators','col2':data_newest_den,'col3':data_news_den})
       html_data.append({'col1':'numerators','col2':data_newest_num,'col3':data_news_num})
+      html_data.append({'col1':'story','col2':data_newest[0][0],'col3':story_id})
 ## ---------------------------
 ## -- we can double check if the
 ## -- results went to the DB
