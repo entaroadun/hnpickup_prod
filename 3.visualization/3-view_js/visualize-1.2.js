@@ -118,7 +118,7 @@ $(function () {
          lines: { show: true },
          points: { show: true, symbol: function circle(ctx, x, y, radius, shadow, px) {
                      for (var i=0; i<STORIES.data.length; i++) {
-		       if ( STORIES.data[i][0] == px && STORIES.data[i][1] && SERIES[2].data[i][1] >= QUANTILES.quant1 ) {
+		       if ( STORIES.data[i][0] == px && STORIES.data[i][1] && SERIES[2].data[i][1] >= QUANTILES.quant3 ) {
 		         ctx.arc(x, y, radius, 0, shadow ? Math.PI : Math.PI * 2, false);
 		         return ctx;
 		       }
