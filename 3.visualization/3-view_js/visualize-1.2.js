@@ -1,5 +1,25 @@
 // here we are using jQuery notation
 $(function () {
+    // ====================================
+  // Global quantile data
+  var QUANTILES = {};
+  // Global graph grid markings
+  var MARKINGS = {};
+  // Global graph options
+  var OPTIONS = {};
+  // Global graph data
+  var SERIES = {};
+  // Global data about best stories
+  var STORIES = {};
+  // Global data smoothing parameters
+  var SMOOTH = 1;
+  var MAX_SMOOTH = 5;
+  // Global data trimming parameter
+  var TRIM = 0;
+  // HN points button (trick to make it load faster)
+  var HNPOINTS = "This app got <iframe id='hnbutton' src='http://hnapiwrapper.herokuapp.com/button.html?width=120&amp;url=http://hnpickup.appspot.com/&amp;title=When is good time to submit a story on HN?' frameborder='0' height='22' width='90'></iframe> on HN.";
+  // Ads iframe inside iframe (trick to make it load faster)
+  var ADS = "<iframe width='151' height='251' marginwidth='0' marginheight='0' vspace='0' hspace='0' frameborder='0' allowtransparency='true' scrolling='no' src='/js/ad_js_wrapper.html'></iframe>";
   // ====================================
   // Pretty day formatting
   // function for graph ticks
@@ -31,26 +51,6 @@ $(function () {
       (RegExp(name + '=' + '(.+?)(&|$)').exec(location.search)||[,null])[1]
     );
   }
-  // ====================================
-  // Global quantile data
-  var QUANTILES = {};
-  // Global graph grid markings
-  var MARKINGS = {};
-  // Global graph options
-  var OPTIONS = {};
-  // Global graph data
-  var SERIES = {};
-  // Global data about best stories
-  var STORIES = {};
-  // Global data smoothing parameters
-  var SMOOTH = 1;
-  var MAX_SMOOTH = 5;
-  // Global data trimming parameter
-  var TRIM = 0;
-  // HN points button (trick to make it load faster)
-  var HNPOINTS = "This app got <iframe id='hnbutton' src='http://hnapiwrapper.herokuapp.com/button.html?width=120&amp;url=http://hnpickup.appspot.com/&amp;title=When is good time to submit a story on HN?' frameborder='0' height='22' width='90'></iframe> on HN.";
-  // Ads iframe inside iframe (trick to make it load faster)
-  var ADS = "<iframe width='151' height='251' marginwidth='0' marginheight='0' vspace='0' hspace='0' frameborder='0' allowtransparency='true' scrolling='no' src='/js/ad_js_wrapper.html'></iframe>";
   // ====================================
   // We want to make the data look good
   // and enable to see trends if the exist
