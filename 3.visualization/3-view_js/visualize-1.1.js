@@ -47,6 +47,10 @@ $(function () {
   var MAX_SMOOTH = 5;
   // Global data trimming parameter
   var TRIM = 0;
+  // HN points button (trick to make it load faster)
+  var HNPOINTS = "This app got <iframe id='hnbutton' src='http://hnapiwrapper.herokuapp.com/button.html?width=120&amp;url=http://hnpickup.appspot.com/&amp;title=When is good time to submit a story on HN?' frameborder='0' height='22' width='90'></iframe> on HN.";
+  // Ads iframe inside iframe (trick to make it load faster)
+  var ADS = "<iframe width='151' height='251' marginwidth='0' marginheight='0' vspace='0' hspace='0' frameborder='0' allowtransparency='true' scrolling='no' src='/js/ad_js_wrapper.html'></iframe>";
   // ====================================
   // We want to make the data look good
   // and enable to see trends if the exist
@@ -72,6 +76,18 @@ $(function () {
     for (var k=0; k<=n_series; k++) {
       for (var i=1; i<=trim; i++) {
 	series[k].data.shift();
+      }
+    }
+    // Trim max values
+    for (var i=1; i<=data_length-TRIM-SMOOTH; i++) {
+      if ( series[0].data[i][1] > QUANTILES.max_news ) {
+	series[0].data[i][1] = QUANTILES.max_news;
+      }
+      if ( series[1].data[i][1] > QUANTILES.max_news ) {
+	series[1].data[i][1] = QUANTILES.max_news;
+      }
+      if ( series[2].data[i][1] > QUANTILES.max_pickup ) {
+	series[2].data[i][1] = QUANTILES.max_pickup;
       }
     }
     return series;
@@ -100,7 +116,15 @@ $(function () {
       // (we want global max in the graph)
       OPTIONS = {
          lines: { show: true },
-         points: { show: false },
+         points: { show: true, symbol: function circle(ctx, x, y, radius, shadow, px) {
+                     for (var i=0; i<STORIES.data.length; i++) {
+		       if ( STORIES.data[i][0] == px && STORIES.data[i][1] ) {
+		         ctx.arc(x, y, radius, 0, shadow ? Math.PI : Math.PI * 2, false);
+		         return ctx;
+		       }
+		     }
+	           }
+	         },
          xaxis: { 
 	     ticks: function (axis) {
 	              // fancy ticks, we need to know when is now,
@@ -127,7 +151,7 @@ $(function () {
            { position: "right", tickDecimals: 2, tickSize: 0, min: 0, max: QUANTILES.max_pickup }
          ],
          legend: { container: $('#legend') },
-	 grid: { markings: MARKINGS }
+	 grid: { markings: MARKINGS, hoverable: true }
       };
       // now we are ready to load the graph
       // ("time sensitive" data)
@@ -198,12 +222,16 @@ $(function () {
   // run all function
   // when the html is ready
   $(document).ready(function() {
-    // initialize quantile
-    // and graph data
-    fetchAllData();
     // initialize help file in
     // form of quickFlip
     $('#flip').quickFlip({ctaSelector:'.cta'});
+    // initialize quantile
+    // and graph data
+    fetchAllData();
+    // Add HN button
+    $('#hnpoints').html(HNPOINTS);
+    // Add Ads
+    $('#ads').html(ADS);
   });
 });
 

@@ -1983,7 +1983,7 @@
                     if (symbol == "circle")
                         ctx.arc(x, y, radius, 0, shadow ? Math.PI : Math.PI * 2, false);
                     else
-                        symbol(ctx, x, y, radius, shadow);
+                        symbol(ctx, x, y, radius, shadow, points[i]);
                     ctx.closePath();
                     
                     if (fillStyle) {
@@ -2483,7 +2483,7 @@
             if (series.points.symbol == "circle")
                 octx.arc(x, y, radius, 0, 2 * Math.PI, false);
             else
-                series.points.symbol(octx, x, y, radius, false);
+                series.points.symbol(octx, x, y, radius, false, point[0]);
             octx.closePath();
             octx.stroke();
         }
