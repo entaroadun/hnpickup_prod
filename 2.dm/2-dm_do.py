@@ -73,6 +73,8 @@ LAST_N_DATA_ELEMENTS = 1344
 ## === it holds just three values
 ## === that are collected from
 ## === two web pages every ~ 15 min
+## === (we also store a "hot topic"
+## === story id as a fun fact)
 ## =================================
 
 class HNSCORE(db.Model):
@@ -80,6 +82,7 @@ class HNSCORE(db.Model):
   score_news = db.FloatProperty()
   score_newest = db.FloatProperty()
   pickup_ratio = db.FloatProperty()
+  story_id = db.IntegerProperty()
 
 ## =================================
 ## === DM data table, very simple

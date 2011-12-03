@@ -77,13 +77,10 @@
     <!-- recommendation systm goes here -->
     <a id='recommendation' href='#'>Now it's <span id='timing'>...</span> time to <span id='submit'>submit</span> a story</a>
     <br/>
-    <!-- hacker news button to show how many points your app got and also a user can add karma by clicking on it -->
-    <span id='hnpoints'>&nbsp;</span>
-    <!-- an ad could go here -->
-    <div id='ads'>
-      <!-- Begin BidVertiser code -->
-      <!-- End BidVertiser code --> 
-    </div>
+    <!-- hacker news button to show how many points your app got and also a user can add karma by clicking on it (it's loaded on document ready event so it does not slow down the graph generation) -->
+    <span id='hnpoints'>This app got <span id='hnbutton'>...</span> on HN.</span>
+    <!-- an ad could go here (it's loaded on document ready event so it does not slow down the graph generation) -->
+    <div id='ads'>&nbsp;</div>
   </div>
   </body>
 </html>

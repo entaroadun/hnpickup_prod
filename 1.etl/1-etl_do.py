@@ -65,6 +65,8 @@ N_POINT_AVERAGE = 6
 ## === (plus a time stamp)
 ## === that are collected from
 ## === two web pages every ~ 15 min
+## === (we also store a "hot topic"
+## === story id as a fun fact)
 ## =================================
 
 class HNSCORE(db.Model):
@@ -135,7 +137,9 @@ class MainHandler(webapp.RequestHandler):
 ## ---------------------------
 ## -- Figure out if the best
 ## -- newest story matches
-## -- best news story
+## -- one of the lower N news stories
+## -- if it does then we hava 
+## -- a fun fact: "hot topic"
       story_id = int(0)
       if len(data_news) >= N_POINT_AVERAGE and len(data_newest) >= N_POINT_AVERAGE:
 	for i in range(0,len(data_news)):

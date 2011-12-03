@@ -51,6 +51,8 @@ MAX_NDATA_ELEMENTS = 3000
 ## === it holds just three values
 ## === that are collected from
 ## === two web pages every ~ 15 min
+## === (we also store a "hot topic"
+## === story id as a fun fact)
 ## =================================
 
 class HNSCORE(db.Model):
@@ -92,6 +94,8 @@ class MainHandler(webapp.RequestHandler):
 ## -- now we are ready to get 
 ## -- the data and feed it into
 ## -- a json template
+## -- (more about story_id in 
+## -- the "1-etl_do.py" file)
     qry = db.GqlQuery('SELECT * FROM HNSCORE ORDER BY etime DESC limit '+str(ndata_elements))
     results = qry.fetch(ndata_elements)
     for i in range(ndata_elements-1,-1,-1): ## reverse the data, i think "reverse" function takes a lot of cpu

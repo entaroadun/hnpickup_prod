@@ -16,10 +16,12 @@ $(function () {
   var MAX_SMOOTH = 5;
   // Global data trimming parameter
   var TRIM = 0;
-  // HN points button (trick to make it load faster)
-  var HNPOINTS = "This app got <iframe id='hnbutton' src='http://hnapiwrapper.herokuapp.com/button.html?width=120&amp;url=http://hnpickup.appspot.com/&amp;title=When is good time to submit a story on HN?' frameborder='0' height='22' width='90'></iframe> on HN.";
-  // Ads iframe inside iframe (trick to make it load faster)
-  var ADS = "<iframe width='151' height='251' marginwidth='0' marginheight='0' vspace='0' hspace='0' frameborder='0' allowtransparency='true' scrolling='no' src='/js/ad_js_wrapper.html'></iframe>";
+  // Dirty way of making your assets load 
+  // faster: iframe inside an iframe
+  // -- HN points button
+  var HNBUTTON = "<iframe width='90' height='22' marginwidth='0' marginheight='0' vspace='0' hspace='0' frameborder='0' allowtransparency='true' scrolling='no' src='/js/hnbutton_js_wrapper.html'></iframe>";
+  // -- Nonobstructive Ads
+  var ADS = "<iframe width='151' height='251' marginwidth='0' marginheight='0' vspace='0' hspace='0' frameborder='0' allowtransparency='true' scrolling='no' src='/js/ads_js_wrapper.html'></iframe>";
   // ====================================
   // Pretty day formatting
   // function for graph ticks
@@ -223,13 +225,13 @@ $(function () {
   // when the html is ready
   $(document).ready(function() {
     // initialize help file in
-    // form of quickFlip
+    // form of a quickFlip
     $('#flip').quickFlip({ctaSelector:'.cta'});
     // initialize quantile
     // and graph data
     fetchAllData();
     // Add HN button
-    $('#hnpoints').html(HNPOINTS);
+    $('#hnbutton').html(HNBUTTON);
     // Add Ads
     $('#ads').html(ADS);
   });
