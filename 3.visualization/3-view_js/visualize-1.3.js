@@ -11,6 +11,8 @@ $(function () {
   var SERIES = {};
   // Global data about best stories
   var STORIES = {};
+  // Global data about best story titles
+  var TITLES = [];
   // Global data smoothing parameters
   var SMOOTH = 1;
   var MAX_SMOOTH = 5;
@@ -21,7 +23,11 @@ $(function () {
   // -- HN points button
   var HNBUTTON = "<iframe width='90' height='22' marginwidth='0' marginheight='0' vspace='0' hspace='0' frameborder='0' allowtransparency='true' scrolling='no' src='/js/hnbutton_js_wrapper.html'></iframe>";
   // -- Nonobstructive Ads
-  var ADS = "<iframe width='151' height='251' marginwidth='0' marginheight='0' vspace='0' hspace='0' frameborder='0' allowtransparency='true' scrolling='no' src='/js/ads_js_wrapper.html'></iframe>";
+  var ADS = "<iframe width='152' height='352' marginwidth='0' marginheight='0' vspace='0' hspace='0' frameborder='0' allowtransparency='true' scrolling='no' src='/js/ads_js_wrapper.html'></iframe>";
+  // -- Tooltip needs to keep track what is showing
+  var TOOLTIP_POINT = 0;
+  // -- Tooltip needs to know if it can disapeare
+  var TOOLTIP_MOUSE = false;
   // ====================================
   // Pretty day formatting
   // function for graph ticks
@@ -52,6 +58,67 @@ $(function () {
     return decodeURI(
       (RegExp(name + '=' + '(.+?)(&|$)').exec(location.search)||[,null])[1]
     );
+  }
+  // ====================================
+  // Show HN story title and link
+  function showTooltip(e, pos, item) {
+    if ( item ) { 
+      var px = item.datapoint[0].toFixed(5); 
+      var py = item.datapoint[1].toFixed(5); 
+      for (var i=0; i<STORIES.data.length; i++) {
+	if ( item.seriesIndex == 2 && STORIES.data[i][0] == px && STORIES.data[i][1] && SERIES[2].data[i][1] >= QUANTILES.quant3 ) {
+	  if ( TOOLTIP_POINT != STORIES.data[i][1] || $("#tooltip").length == 0 ) {
+	    TOOLTIP_POINT = STORIES.data[i][1];
+	    $("#tooltip").fadeOut(50,function(){$(this).remove()});
+	    $("<div id='tooltip'><span id='item'><a id='hntitle' href='#'>Loading ...</a></span></div>").css({top: item.pageY + 10, left: item.pageX - 75}).appendTo("body").fadeIn(50);
+	    // Prevent removing the tooltip if mouse if over the element
+	    $("#tooltip").mouseover(function(){$(this).stop().animate({opacity:'1.0'},200);});
+	    $("#tooltip").mouseleave(function(){;$(this).animate({opacity:'0.8'},200)});
+	    getStoryLink(STORIES.data[i][1]);
+	    break;
+	  }
+	}
+      }
+    } else {
+      $("#tooltip").fadeOut(500,function(){$(this).remove()});
+    }
+  }
+  // ====================================
+  // Having item id go get the title and
+  // other related to HN post stuff
+  function getStoryLink(item_id) {
+    // Don't query multiple times
+    // maybe we already have the title
+    var found = false;
+    for ( var i=0; i<TITLES.length; i++ ) {
+      if ( TITLES[i][0] == item_id ) {
+	hn_post_to_html(TITLES[i][1]);
+	found = true;
+	break;
+      }
+    }
+    // If we don't have it we need to query the WEB
+    if ( !found ) {
+      // Request for news from jQuery ajax
+      // documentation http://api.ihackernews.com/
+      // API is provided by http://ronnieroller.com/
+      $.ajax({
+        url: 'http://api.ihackernews.com/post/'+ item_id +'?format=jsonp',
+        dataType: 'jsonp',
+        success: function( data, textStatus, jqXHR ) {
+	  TITLES.push([item_id,data]);
+	  hn_post_to_html(data);
+        },
+        error: function( jqXHR, textStatus, errorThrown ) {
+	  $('#item').html('<a id="hntitle" href="#">...'+errorThrown+'</a>'); 
+        }
+      });          
+    }
+  }
+  // ====================================
+  // HN API JSON to pretty HTML
+  function hn_post_to_html (hn_story_data) {
+    $('#item').html('<a id="hntitle" href="'+hn_story_data.url+'" target="_new">'+hn_story_data.title+'</a><br/><a id="hnstats" href="http://news.ycombinator.com/item?id='+hn_story_data.id+'" target="_new">'+hn_story_data.points+' points with '+hn_story_data.commentCount+' comments</a>');
   }
   // ====================================
   // We want to make the data look good
@@ -100,7 +167,7 @@ $(function () {
   // 1. Quantiles (percentiles)
   // 2. ETL data
   // When page is loaded we need 1. and 2. in correct order (fetchAllData)
-  // After that we can load just 2. every ~ 10 min (fetchGraphData)
+  // After that we can load just 2. every ~ 15 min (fetchGraphData)
   function fetchAllData () {
     // This will be executed
     // when data arrives from the server
@@ -205,6 +272,9 @@ $(function () {
        // Create sliders
        $('#smooth').slider({min:0,max:MAX_SMOOTH,orientation:'vertical',value:SMOOTH,range:'min',slide:function(e,ui){SMOOTH=ui.value; $.plot($('#plot'),smoothAndTrimSeries(SERIES,SMOOTH,TRIM),OPTIONS);}});
        $('#trim').slider({min:0,max:data_length-MAX_SMOOTH-1,orientation:'horizontal',range:'min',slide:function(e,ui){TRIM=ui.value; $.plot($('#plot'),smoothAndTrimSeries(SERIES,SMOOTH,TRIM),OPTIONS);}});
+       // Add event - show a hot topic story
+       $('#plot').bind('plothover',showTooltip);
+       $('#plot').bind('plotclick',showTooltip);
      }
      // jQuery ajax call
      // pass number of needed data elements

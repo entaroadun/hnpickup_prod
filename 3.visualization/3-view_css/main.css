@@ -46,7 +46,7 @@ to the far left
 #ads {
   margin: 0;
   padding: 0;
-  margin-top: -33%;
+  margin-top: -37%;
   /*width: 15%;
   height: 25%;*/
   float: left;
@@ -77,6 +77,34 @@ inside the "flip" element
   width: 90%; 
   height: 90%; 
 }
+/*
+Tooltip for hot topics
+on HN (ajax call to HN)
+*/
+#tooltip {
+  color: #444444;
+  background-color: #E5E1DE;
+  text-align: left;
+  line-height: 85%;
+  display: none;
+  position: absolute;
+  width: 15%;
+  border: 1px solid #CACAC9;
+  padding: 2px;
+  opacity: 0.8;
+  z-index: 3;
+}
+#hntitle {
+  font-size: 0.69em;
+  text-decoration: none;
+  color: #444444;
+}
+#hnstats {
+  font-size: 0.59em;
+  text-decoration: none;
+  color: #807B77;
+}
+/* Sliders */
 #trim {
   margin-left: 10%;
   margin-bottom: 1%;
@@ -173,6 +201,7 @@ inside the "flip" element
   line-height: 150%;
   font-size: 0.69em;
   text-align: left;
+  word-spacing: -1px;
   background-color: #E5E1DE;
 }
 #definitions {
