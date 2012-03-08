@@ -96,7 +96,8 @@ class MainHandler(webapp.RequestHandler):
 ## -- (look for web API here http://www.programmableweb.com/)
     data_newest = []
     data_newest_score = float(0)
-    result = urlfetch.fetch(url='https://news.ycombinator.com/newest',deadline=60)
+    result = urlfetch.fetch(url='https://apps.ycombinator.com/newest',deadline=60,validate_certificate=False)
+    html_data.append({'col1':'newest','col2':'stat code','col3':str(result.status_code)})
     if result.status_code == 200:
       txt_data = result.content
       for m in re.finditer(r"(\d+) points?</span>.+?<a href=.item\?id=(\d+).>",txt_data):
@@ -119,7 +120,8 @@ class MainHandler(webapp.RequestHandler):
 ## -- (look for web API here http://www.programmableweb.com/)
     data_news = []
     data_news_score = float(0)
-    result = urlfetch.fetch(url='https://news.ycombinator.com/news',deadline=60)
+    result = urlfetch.fetch(url='https://apps.ycombinator.com/news',deadline=60,validate_certificate=False)
+    html_data.append({'col1':'news','col2':'stat code','col3':str(result.status_code)})
     if result.status_code == 200:
       txt_data = result.content
       for m in re.finditer(r"(\d+) points?</span>.+?<a href=.item\?id=(\d+).>",txt_data):
