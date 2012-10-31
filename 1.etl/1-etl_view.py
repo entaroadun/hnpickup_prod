@@ -78,6 +78,7 @@ class MainHandler(webapp.RequestHandler):
     pickup_ratio = []
     story_id = []
     str_ndata_elements = self.request.get('ndata_elements')
+    str_ndata_secret = self.request.get('ndata_secret')
     ndata_elements = 48 ## this is equal to 12h = 12 * 4 * 15min
 ## ------------------------
 ## -- remeber to cleanup user
@@ -90,6 +91,10 @@ class MainHandler(webapp.RequestHandler):
 	ndata_elements = 7
       else:
         ndata_elements = int(str_ndata_elements)
+## ---------------------------
+## -- a secret override option
+    if len(str_ndata_secret) > 0 and int(str_ndata_secret) == 0:
+      ndata_elements = int(str_ndata_elements)
 ## ---------------------------
 ## -- now we are ready to get 
 ## -- the data and feed it into
