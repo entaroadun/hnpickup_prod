@@ -1,53 +1,6 @@
-application: hnpickup
-version: 12 
-runtime: python
+runtime: php56
 api_version: 1
 
-# you might have two different
-# application that you want to
-# copy data between, e.g.:
-# http://code.google.com/appengine/docs/python/tools/uploadingdata.html
-
-builtins:
-- remote_api: on
-
-# this files defined all our
-# routes, backends use same routes
-# as frontends
-
 handlers:
-- url: /etl_process
-  script: 1.etl/1-etl_do.py
-  login: admin
-- url: /etl.json
-  script: 1.etl/1-etl_view.py
-- url: /dm_process
-  script: 2.dm/2-dm_do.py
-  login: admin
-- url: /dm.json
-  script: 2.dm/2-dm_view.py
-- url: /favicon\.ico
-  static_files: 3.visualization/3-view_favicon.ico
-  upload: 3.visualization/3-view_favicon.ico
-- url: /apple-touch-icon\.png
-  static_files: 3.visualization/3-view_apple-touch-icon.png
-  upload: 3.visualization/3-view_apple-touch-icon.png
-- url: /hnpickup_ratio_visual_analysis.png
-  static_files: 3.visualization/3-view_docs/hnp_ratio_visual_analysis.png
-  upload: 3.visualization/3-view_docs/hnp_ratio_visual_analysis.png
-- url: /hnpickup_web_app_statistics_snapshot.png
-  static_files: 3.visualization/3-view_docs/hnp_web_app_statistics_snapshot.png
-  upload: 3.visualization/3-view_docs/hnp_web_app_statistics_snapshot.png
-- url: /humans\.txt
-  static_files: 3.visualization/3-view_humans.txt
-  upload: 3.visualization/3-view_humans.txt
-- url: /robots\.txt
-  static_files: 3.visualization/3-view_robots.txt
-  upload: 3.visualization/3-view_robots.txt
-- url: /css
-  static_dir: 3.visualization/3-view_css 
-- url: /js
-  static_dir: 3.visualization/3-view_js 
 - url: /.*
-  script: 3.visualization/3-view_do.py
-
+  script: get_hnpage.php
