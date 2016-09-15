@@ -1,5 +1,8 @@
-runtime: php56
+runtime: php55
 api_version: 1
+
+application: hnpickup
+version: 13
 
 handlers:
 - url: /.*
