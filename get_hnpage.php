@@ -23,7 +23,7 @@ function get_matches_in_array ( $matches ) {
 
 }
 
-$string = preg_replace_callback('/(\d+) points?<\/span> by','get_matches_in_array',$news);
+$string = preg_replace_callback('/(\d+) points?<\/span> by/','get_matches_in_array',$news);
 
 
 echo " ".strlen($news)." ".strlen($newest)." ".$NEWS_ARR[0]."|";
