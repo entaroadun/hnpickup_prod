@@ -90,6 +90,9 @@ function compare_posts ( &$posts_ref_1, &$posts_ref_2 ) {
 // =========================
 
 function insert_posts_into_datastore ( $posts ) {
+  // https://github.com/google/google-api-php-client
+  // https://cloud.google.com/php/getting-started/using-cloud-datastore
+  // https://gae-php-tips.appspot.com/2013/12/23/getting-started-with-the-cloud-datastore-on-php-app-engine/
 }
 
 // =========================
