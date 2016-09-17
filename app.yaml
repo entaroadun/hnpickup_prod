@@ -5,5 +5,8 @@ application: hnpickup
 version: 13
 
 handlers:
-- url: /.*
+- url: /get_hnpage.php
   script: get_hnpage.php
+  login: admin
+- url: /.*
+  script: index.html
