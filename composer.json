@@ -1,0 +1,6 @@
+{
+  "require": {
+    "tomwalder/php-gds": "dev-datastore-api-v1",
+    "google/apiclient": "^2.0"
+  }
+}

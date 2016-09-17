@@ -1,6 +1,12 @@
 <?php
 
-echo "Work in progress ... stayed tuned ...\n";
+// =========================
+
+require_once('./vendor/autoload.php');
+putenv('GOOGLE_APPLICATION_CREDENTIALS=./hnpickup-sa.json');
+$HNPOSTS = new GDS\Store('HNPOSTS',new GDS\Gateway\RESTv1('hnpickup'));
+
+// =========================
 
 // =========================
 
@@ -13,6 +19,7 @@ function get_dom_from_url ( $url ) {
   curl_setopt($ch,CURLOPT_RETURNTRANSFER,1); 
   $html = curl_exec($ch); 
   curl_close($ch); 
+  // -- convert text to DOM structure
   if ( strlen($html) > 0 ) {
     $dom = new domDocument; 
     $internalErrors = libxml_use_internal_errors(true);
@@ -89,10 +96,19 @@ function compare_posts ( &$posts_ref_1, &$posts_ref_2 ) {
 
 // =========================
 
-function insert_posts_into_datastore ( $posts ) {
-  // https://github.com/google/google-api-php-client
-  // https://cloud.google.com/php/getting-started/using-cloud-datastore
-  // https://gae-php-tips.appspot.com/2013/12/23/getting-started-with-the-cloud-datastore-on-php-app-engine/
+function insert_posts_into_datastore ( $posts, $datastore ) {
+
+  $data_objs = array();
+  // -----------------------
+  if ( count($posts) && count($datastore) ) {
+    foreach ( $posts as $key => $post ) {
+      $data_objs[] = $datastore->createEntity($post);
+    }
+    $datastore->upsert($data_objs);
+  }
+  // -----------------------
+  return($data_objs);
+
 }
 
 // =========================
@@ -104,6 +120,8 @@ $newest_dom = get_dom_from_url('https://news.ycombinator.com/newest');
 $newest_posts = get_posts_from_dom($newest_dom,'newest',$etime);
 $the_same = compare_posts($news_posts,$newest_posts);
 echo "Parsed ".count($news_posts)." news and ".count($newest_posts)." newest posts where ".$the_same." is/are the same at the time ".$etime." ...\n";
-
+$news_inserted = insert_posts_into_datastore($news_posts,$HNPOSTS);
+$newest_inserted = insert_posts_into_datastore($newest_posts,$HNPOSTS);
+echo "Inserted ".count($news_inserted)." news and ".count($newest_inserted)." newest posts ...\n";
 
 ?>
