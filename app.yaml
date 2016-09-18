@@ -5,8 +5,14 @@ application: hnpickup
 version: 13
 
 handlers:
-- url: /get_hnpage.php
-  script: get_hnpage.php
+- url: /start_etl
+  script: 1.etl/get_hnpages.php
   login: admin
+- url: /robots\.txt
+  static_files: static/robots.txt
+  upload: static/robots.txt
+- url: /favicon\.ico
+  static_files: static/favicon.ico
+  upload: static/favicon.ico
 - url: /.*
-  script: index.html
+  script: 3.vis/index.html

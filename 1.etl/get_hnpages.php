@@ -2,29 +2,39 @@
 
 // =========================
 
-require_once('./vendor/autoload.php');
-putenv('GOOGLE_APPLICATION_CREDENTIALS=./hnpickup-sa.json');
-$HNPOSTS = new GDS\Store('HNPOSTS',new GDS\Gateway\RESTv1('hnpickup'));
+require_once('../vendor/autoload.php');
 
 // =========================
+
+function create_connection ( $datastore_name ) {
+
+  $obj_store = NULL;
+  // -----------------------
+  $obj_store = new \GDS\Store($datastore_name);
+  // -----------------------
+  return($obj_store);
+
+}
 
 // =========================
 
 function get_dom_from_url ( $url ) {
 
-  $dom = null;
+  $dom = NULL;
   // -----------------------
   $ch = curl_init(); 
-  curl_setopt($ch,CURLOPT_URL,$url); 
-  curl_setopt($ch,CURLOPT_RETURNTRANSFER,1); 
-  $html = curl_exec($ch); 
-  curl_close($ch); 
-  // -- convert text to DOM structure
-  if ( strlen($html) > 0 ) {
-    $dom = new domDocument; 
-    $internalErrors = libxml_use_internal_errors(true);
-    $dom->loadHTML($html);
-    libxml_use_internal_errors($internalErrors);
+  if ( !is_null($ch) ) {
+    curl_setopt($ch,CURLOPT_URL,$url); 
+    curl_setopt($ch,CURLOPT_RETURNTRANSFER,1); 
+    $html = curl_exec($ch); 
+    curl_close($ch); 
+    // -- convert text to DOM structure
+    if ( strlen($html) > 0 ) {
+      $dom = new domDocument; 
+      $internalErrors = libxml_use_internal_errors(true);
+      $dom->loadHTML($html);
+      libxml_use_internal_errors($internalErrors);
+    }
   }
   // -----------------------
   return($dom);
@@ -65,7 +75,7 @@ function get_posts_from_dom ( $dom, $page, $etime ) {
 	  $posttime = preg_replace('/ days?/','',$posttime)*1*60*24;
 	}
 	// -- this should match datastore entities
-	$posts[$postid] = array('etime'=>$etime,'page'=>$page,'rank'=>$rank,'postid'=>$postid,'title'=>$title,'url'=>$url,'points'=>$points,'user'=>$user,'posttime'=>$posttime,'compare'=>'0');
+	$posts[$postid] = array('etime'=>$etime,'page'=>$page,'rank'=>(int)$rank,'postid'=>$postid,'title'=>$title,'url'=>$url,'points'=>(int)$points,'user'=>$user,'posttime'=>$posttime,'compare'=>'0');
       }
     }
   }
@@ -100,11 +110,13 @@ function insert_posts_into_datastore ( $posts, $datastore ) {
 
   $data_objs = array();
   // -----------------------
-  if ( count($posts) && count($datastore) ) {
-    foreach ( $posts as $key => $post ) {
-      $data_objs[] = $datastore->createEntity($post);
+  if ( !is_null($datastore) ) {
+    if ( count($posts) && count($datastore) ) {
+      foreach ( $posts as $key => $post ) {
+	$data_objs[] = $datastore->createEntity($post);
+      }
+      $datastore->upsert($data_objs);
     }
-    $datastore->upsert($data_objs);
   }
   // -----------------------
   return($data_objs);
@@ -113,15 +125,66 @@ function insert_posts_into_datastore ( $posts, $datastore ) {
 
 // =========================
 
+function create_posts_summary ( $name, $posts, $query ) {
+
+  $result = array();
+  // -----------------------
+  $min_points = 0;
+  $max_points = 0;
+  $ave_points = 0;
+  $n_points = 0;
+  $max_story_postid = 0;
+  $max_story_title = '';
+  $max_story_url = '';
+  foreach ( $posts as $key => $post ) {
+    if ( $query($post) ) {
+      $ave_points += $post['points'];
+      $n_points ++;
+      if ( $min_points == 0 || $min_points > $post['points'] ) {
+	$min_points = $post['points'];
+      }
+      if ( $max_points == 0 || $max_points < $post['points'] ) {
+	$max_points = $post['points'];
+	$max_story_postid = $post['postid'];
+	$max_story_title = $post['title'];
+	$max_story_url = $post['url'];
+      }
+    }
+  }
+  if ( $n_points > 0 ) {
+    $ave_points /= $n_points;
+  }
+  $result[$name.'_min'] = $min_points;
+  $result[$name.'_ave'] = $ave_points;
+  $result[$name.'_max'] = $max_points;
+  $result[$name.'_postid'] = $max_story_postid;
+  $result[$name.'_title'] = $max_story_title;
+  $result[$name.'_url'] = $max_story_url;
+  // -----------------------
+  return($result);
+}
+
+// =========================
+
 $etime = time();
+syslog(LOG_INFO,"Starting at ".$etime);
+$hnposts_ds = create_connection('HNPOSTS');
+$hnposts_summary_ds = create_connection('HNPOSTS_SUMMARY');
 $news_dom = get_dom_from_url('https://news.ycombinator.com/news');
 $news_posts = get_posts_from_dom($news_dom,'news',$etime);
 $newest_dom = get_dom_from_url('https://news.ycombinator.com/newest');
 $newest_posts = get_posts_from_dom($newest_dom,'newest',$etime);
 $the_same = compare_posts($news_posts,$newest_posts);
 echo "Parsed ".count($news_posts)." news and ".count($newest_posts)." newest posts where ".$the_same." is/are the same at the time ".$etime." ...\n";
-$news_inserted = insert_posts_into_datastore($news_posts,$HNPOSTS);
-$newest_inserted = insert_posts_into_datastore($newest_posts,$HNPOSTS);
-echo "Inserted ".count($news_inserted)." news and ".count($newest_inserted)." newest posts ...\n";
+syslog(LOG_INFO,"Parsed ".count($news_posts)." news and ".count($newest_posts)." newest posts where ".$the_same." is/are the same at the time ".$etime." ...\n");
+$newest_summary = create_posts_summary('newest',$newest_posts,function($post){return(1);});
+$both_summary = create_posts_summary('both',$newest_posts,function($post){return($post['compare']==1);});
+$news_summary = create_posts_summary('news',$news_posts,function($post){return(1);});
+$all_summary = [['etime'=>$etime]+$newest_summary+$both_summary+$news_summary];
+$news_inserted = insert_posts_into_datastore($news_posts,$hnposts_ds);
+$newest_inserted = insert_posts_into_datastore($newest_posts,$hnposts_ds);
+$summary_inserted = insert_posts_into_datastore($all_summary,$hnposts_summary_ds);
+echo "Inserted ".count($news_inserted)." news and ".count($newest_inserted)." newest posts with ".count($summary_inserted)." summary at time ".time()."...\n";
+syslog(LOG_INFO,"Inserted ".count($news_inserted)." news and ".count($newest_inserted)." newest posts with ".count($summary_inserted)." summary at time ".time()."...\n");
 
 ?>

@@ -1,5 +1,5 @@
 {
   "require": {
-    "tomwalder/php-gds": "dev-datastore-api-v1"
+    "tomwalder/php-gds": "v2.1.1"
   }
 }
