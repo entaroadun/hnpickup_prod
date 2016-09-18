@@ -9,10 +9,10 @@ handlers:
   script: 1.etl/get_hnpages.php
   login: admin
 - url: /robots\.txt
-  static_files: static/robots.txt
-  upload: static/robots.txt
+  static_files: 4.static/robots.txt
+  upload: 4.static/robots.txt
 - url: /favicon\.ico
-  static_files: static/favicon.ico
-  upload: static/favicon.ico
+  static_files: 4.static/favicon.ico
+  upload: 4.static/favicon.ico
 - url: /.*
-  script: 3.vis/index.html
+  script: 4.static/index.html
