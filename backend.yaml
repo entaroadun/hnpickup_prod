@@ -1,0 +1,10 @@
+runtime: php55
+api_version: 1
+threadsafe: true
+module: etl
+version: 13
+
+handlers:
+- url: /.*
+  script: 1.etl/get_hnpages.php
+  login: admin
