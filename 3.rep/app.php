@@ -18,11 +18,34 @@ $APP['twig.path'] = [ __DIR__.'/templates' ];
 // =========================
 
 $APP->get('/', function (Application $app, Request $request) {
-  return("Main page");
+  return($app->redirect('/report/dashboard'));
 });
 
-$APP->get('/{name}', function ($name, Application $app, Request $request) {
-  return("page:".$name);
+$APP->get('/report/dashboard', function (Application $app, Request $request) {
+  return($app['twig']->render('dashboard.html',array('report_name'=>'Full Dashboard')));
+});
+
+$APP->get('/report/news', function (Application $app, Request $request) {
+  return($app['twig']->render('news.html',array('report_name'=>'Hacker News Page Rewind')));
+});
+
+$APP->get('/report/newest', function (Application $app, Request $request) {
+  return($app['twig']->render('newest.html',array('report_name'=>'Hacker Newest Page Rewind')));
+});
+
+$APP->get('/report/pickup', function (Application $app, Request $request) {
+  return($app['twig']->render('pickup.html',array('report_name'=>'Hacker News Pickup Ratio')));
+});
+
+$APP->error(function (Exception $e, Request $request, $code) use ($APP) {
+  switch ( $code ) {
+    case 404:
+      $message = 'The requested page could not be found.';
+      break;
+    default:
+      $message = 'We are sorry, but something went terribly wrong.';
+  }
+  return($APP['twig']->render('error.html',array('report_name'=>'Error','message'=>$message)));
 });
 
 // =========================

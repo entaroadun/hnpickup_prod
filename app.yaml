@@ -2,9 +2,6 @@ runtime: php55
 api_version: 1
 threadsafe: true
 
-application: hnpickup
-version: 13
-
 handlers:
 - url: /start_etl
   script: 1.etl/get_hnpages.php
@@ -15,5 +12,7 @@ handlers:
 - url: /favicon\.ico
   static_files: 4.stat/favicon.ico
   upload: 4.stat/favicon.ico
+- url: /libs
+  static_dir: 4.stat/libs
 - url: /.*
   script: 3.rep/app.php
