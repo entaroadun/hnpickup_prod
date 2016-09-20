@@ -1,5 +1,6 @@
 runtime: php55
 api_version: 1
+threadsafe: true
 
 application: hnpickup
 version: 13
@@ -15,4 +16,4 @@ handlers:
   static_files: 4.stat/favicon.ico
   upload: 4.stat/favicon.ico
 - url: /.*
-  script: 4.stat/index.html
+  script: 3.rep/app.php

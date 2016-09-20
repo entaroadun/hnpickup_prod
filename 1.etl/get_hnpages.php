@@ -2,7 +2,7 @@
 
 // =========================
 
-require_once('../vendor/autoload.php');
+require_once(__DIR__.'/../vendor/autoload.php');
 
 // =========================
 
@@ -10,7 +10,7 @@ function create_connection ( $datastore_name ) {
 
   $obj_store = NULL;
   // -----------------------
-  $obj_store = new \GDS\Store($datastore_name);
+  $obj_store = new GDS\Store($datastore_name);
   // -----------------------
   return($obj_store);
 
@@ -170,6 +170,9 @@ $etime = time();
 syslog(LOG_INFO,"Starting at ".$etime);
 $hnposts_ds = create_connection('HNPOSTS');
 $hnposts_summary_ds = create_connection('HNPOSTS_SUMMARY');
+
+// - - - - - - - - -
+
 $news_dom = get_dom_from_url('https://news.ycombinator.com/news');
 $news_posts = get_posts_from_dom($news_dom,'news',$etime);
 $newest_dom = get_dom_from_url('https://news.ycombinator.com/newest');
@@ -177,6 +180,9 @@ $newest_posts = get_posts_from_dom($newest_dom,'newest',$etime);
 $the_same = compare_posts($news_posts,$newest_posts);
 echo "Parsed ".count($news_posts)." news and ".count($newest_posts)." newest posts where ".$the_same." is/are the same at the time ".$etime." ...\n";
 syslog(LOG_INFO,"Parsed ".count($news_posts)." news and ".count($newest_posts)." newest posts where ".$the_same." is/are the same at the time ".$etime." ...\n");
+
+// - - - - - - - - -
+
 $newest_summary = create_posts_summary('newest',$newest_posts,function($post){return(1);});
 $both_summary = create_posts_summary('both',$newest_posts,function($post){return($post['compare']==1);});
 $news_summary = create_posts_summary('news',$news_posts,function($post){return(1);});
@@ -186,5 +192,7 @@ $newest_inserted = insert_posts_into_datastore($newest_posts,$hnposts_ds);
 $summary_inserted = insert_posts_into_datastore($all_summary,$hnposts_summary_ds);
 echo "Inserted ".count($news_inserted)." news and ".count($newest_inserted)." newest posts with ".count($summary_inserted)." summary at time ".time()."...\n";
 syslog(LOG_INFO,"Inserted ".count($news_inserted)." news and ".count($newest_inserted)." newest posts with ".count($summary_inserted)." summary at time ".time()."...\n");
+
+// - - - - - - - - -
 
 ?>
