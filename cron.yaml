@@ -4,7 +4,7 @@ cron:
 # the usage of backend and frontend from google app engine web UI)
 - description: Get HN posts into a datastore 
   url: /start_etl
-  schedule: every 10 minutes
+  schedule: every 15 minutes
   retry_parameters:
     min_backoff_seconds: 2
     max_backoff_seconds: 120
