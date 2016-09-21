@@ -52,6 +52,7 @@ $APP->get('/report/dashboard/{page}/{number}', function ($page, $number, Applica
     //$memcache->flush(14*60);
   } else {
     $table = $memcache->get('hnposts'.$number.$page);
+    $memcache->flush(14*60);
   }
   $table_name = $table['table_name'];
   $table_prev = $table['table_prev'];
