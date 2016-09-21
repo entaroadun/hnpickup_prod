@@ -27,6 +27,7 @@ $APP->get('/', function (Application $app, Request $request) {
 $APP->get('/report/dashboard/{page}/{number}', function ($page, $number, Application $app, Request $request) {
   $memcache = new Memcached;
   $number = 1*$number;
+
   if ( !$memcache->get('hnposts'.$number.$page) ) {
     $table_rows = array();
     $table_name = '';
@@ -49,6 +50,7 @@ $APP->get('/report/dashboard/{page}/{number}', function ($page, $number, Applica
     $table_prev = "<a href='/report/dashboard/$page/".($number+1)."'>&lt;</a>";
     $table = ['table_rows'=>$table_rows,'table_prev'=>$table_prev,'table_next'=>$table_next,'table_name'=>$table_name];
     $memcache->set('hnposts'.$number.$page,$table);
+    $memcache->flush(14*60);
   } else {
     $table = $memcache->get('hnposts'.$number.$page);
   }
