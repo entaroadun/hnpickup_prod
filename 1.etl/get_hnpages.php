@@ -63,7 +63,7 @@ function get_posts_from_dom ( $dom, $page, $etime ) {
 	$points = preg_replace('/ points?$/','',$element->nextSibling->childNodes->item(1)->childNodes->item(1)->textContent);
 	$user = $element->nextSibling->childNodes->item(1)->childNodes->item(3)->textContent;
 	// -- is this a hire post
-	if ( $element->nextSibling->childNodes->item(1)->childNodes->length >= 5 ) {
+	if ( $element->nextSibling->childNodes->item(1)->childNodes->length > 5 ) {
 	  $posttime = preg_replace('/ ago$/','',$element->nextSibling->childNodes->item(1)->childNodes->item(5)->textContent);
 	} else {
 	  $posttime = '';

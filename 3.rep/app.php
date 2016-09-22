@@ -15,8 +15,8 @@ putenv('GOOGLE_APPLICATION_CREDENTIALS=../0.conf/hnpickup_key.json');
 $APP = new Silex\Application();
 $APP->register(new Silex\Provider\TwigServiceProvider());
 $APP['twig.path'] = [ __DIR__.'/templates' ];
-$APP['hnposts'] = new \GDS\Store('HNPOSTS',new \GDS\Gateway\RESTv1('hnpickup'));
-$APP['hnposts_summary'] = new \GDS\Store('HNPOSTS_SUMMARY',new \GDS\Gateway\RESTv1('hnpickup'));
+$APP['hnposts'] = new \GDS\Store('HNPOSTS');#,new \GDS\Gateway\RESTv1('hnpickup'));
+$APP['hnposts_summary'] = new \GDS\Store('HNPOSTS_SUMMARY');#,new \GDS\Gateway\RESTv1('hnpickup'));
 date_default_timezone_set('America/Los_Angeles');
 
 // =========================

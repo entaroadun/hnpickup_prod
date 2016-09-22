@@ -1,7 +1,7 @@
 {% extends "report.html" %} 
             {% block first_row %}
             <div class="row">
-                <div class="col-lg-12 col-xs-12">
+                <div class="col-lg-12">
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <i class="fa fa-line-chart fa-fw"></i> Hacker News Pickup Ratio
@@ -24,7 +24,7 @@
 	    {% endblock %}
             {% block second_row %}
             <div class="row">
-                <div class="col-lg-6 col-xs-6">
+                <div class="col-lg-6">
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <a href='{{ table_prev }}'>&larr;</a> Hacker News Stories at {{ table_date }} <a href='{{ table_next }}'>&rarr;</a>
@@ -62,7 +62,7 @@
                     <!-- /.panel -->
                 </div>
                 <!-- /.col-lg-6 -->
-                <div class="col-lg-6 col-xs-6">
+                <div class="col-lg-6">
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <a href='{{ table_prev }}'>&larr;</a> Hacker Newest Stories at {{ table_date }} <a href='{{ table_next }}'>&rarr;</a>
