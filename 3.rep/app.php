@@ -21,44 +21,50 @@ date_default_timezone_set('America/Los_Angeles');
 // =========================
 
 $APP->get('/', function (Application $app, Request $request) {
-  return($app->redirect('/report/dashboard/news/1'));
+  return($app->redirect('/report/dashboard/1'));
 });
 
-$APP->get('/report/dashboard/{page}/{number}', function ($page, $number, Application $app, Request $request) {
+$APP->get('/report/dashboard/{number}', function ($number, Application $app, Request $request) {
   $memcache = new Memcached;
   $number = 1*$number;
-  if ( !$memcache->get('hnposts'.$number.$page) ) {
+  if ( !$memcache->get('hnposts'.$number) ) {
     $table_rows = array();
-    $table_name = '';
+    $data_rows = array();
+    $table_date = '';
     $table_next = '';
     $table_prev = '';
     $hnposts = $app['hnposts'];
+    // - - - - - - - - - -
     $hnposts->query('SELECT * FROM HNPOSTS ORDER BY etime DESC LIMIT @end OFFSET @start',['end'=>60,'start'=>(($number-1)*60)]);
     $rows = $hnposts->fetchAll();
     usort($rows,function($a,$b){return(($a->rank<$b->rank)?-1:1);});
     foreach ( $rows as $row ) {
-      if ( $row->page == $page ) {
-        $table_rows[] = ['rank'=>$row->rank,'title'=>$row->title,'url'=>$row->url,'points'=>$row->points,'user'=>$row->user,'compare'=>$row->compare];
-        if ( strcmp($table_name,'') === 0 ) {
-          $table_name = date('Y-m-d H:i T',(int)$row->etime);
-        }
+      $table_rows[$row->page][] = ['rank'=>$row->rank,'title'=>$row->title,'url'=>$row->url,'points'=>$row->points,'postid'=>$row->postid,'compare'=>$row->compare];
+      if ( strcmp($table_date,'') === 0 ) {
+        $table_date = date('Y-m-d H:i T',(int)$row->etime);
       }
     }
-    $table_name = 'Hacker '.ucfirst($page).' Page at '.$table_name;
-    $table_next = "<a href='/report/dashboard/$page/".($number-1)."'>&gt;</a>";
-    $table_prev = "<a href='/report/dashboard/$page/".($number+1)."'>&lt;</a>";
-    $table = ['table_rows'=>$table_rows,'table_prev'=>$table_prev,'table_next'=>$table_next,'table_name'=>$table_name];
-    $memcache->set('hnposts'.$number.$page,$table);
-    //$memcache->flush(14*60);
+    $table_next = "/report/dashboard/".($number-1);
+    $table_prev = "/report/dashboard/".($number+1);
+    // - - - - - - - - - -
+    $hnposts->query('SELECT * FROM HNPOSTS_SUMMARY ORDER BY etime DESC LIMIT 100');
+    $rows = array_reverse($hnposts->fetchAll());
+    foreach ( $rows as $row ) {
+      $data_rows[] = ['etime'=>$row->etime,'value'=>($row->newest_max-$row->news_min)];
+    }
+    // - - - - - - - - - -
+    $table = ['table_news'=>$table_rows['news'],'table_newest'=>$table_rows['newest'],'table_prev'=>$table_prev,'table_next'=>$table_next,'table_date'=>$table_date,'etime'=>time(),'dataset'=>$data_rows];
+    $memcache->set('hnposts.'.$number,$table);
   } else {
-    $table = $memcache->get('hnposts'.$number.$page);
-    $memcache->flush(14*60);
+    $table = $memcache->get('hnposts.'.$number);
   }
-  $table_name = $table['table_name'];
+  $table_date = $table['table_date'];
   $table_prev = $table['table_prev'];
   $table_next = $table['table_next'];
-  $table_rows = $table['table_rows'];
-  return($app['twig']->render('dashboard.html',array('report_name'=>'Full Dashboard','table_rows'=>$table_rows,'table_name'=>$table_name,'table_prev'=>$table_prev,'table_next'=>$table_next)));
+  $table_news = $table['table_news'];
+  $table_newest = $table['table_newest'];
+  $dataset = $table['dataset'];
+  return($app['twig']->render('dashboard.html',array('report_name'=>'Full Dashboard','table_news'=>$table_news,'table_newest'=>$table_newest,'table_date'=>$table_date,'table_prev'=>$table_prev,'table_next'=>$table_next,'dataset'=>$dataset)));
 });
 
 $APP->get('/report/news/{number}', function ($number, Application $app, Request $request) {
@@ -79,7 +85,7 @@ $APP->error(function (Exception $e, Request $request, $code) use ($APP) {
       $message = 'The requested page could not be found.';
       break;
     default:
-      $message = 'We are sorry, but something went terribly wrong.';
+      $message = 'We are sorry, but something went terribly wrong. '.$e;
   }
   return($APP['twig']->render('error.html',array('report_name'=>'Error','message'=>$message)));
 });

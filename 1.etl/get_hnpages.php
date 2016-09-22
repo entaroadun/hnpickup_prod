@@ -29,7 +29,7 @@ function get_dom_from_url ( $url ) {
     curl_setopt($ch,CURLOPT_RETURNTRANSFER,true); 
     curl_setopt($ch,CURLOPT_SSL_VERIFYHOST,false);
     curl_setopt($ch,CURLOPT_SSL_VERIFYPEER,false);
-    $html = curl_exec($ch); 
+    $html = iconv('UTF-8','ASCII//TRANSLIT',curl_exec($ch)); 
     curl_close($ch); 
     // -- convert text to DOM structure
     if ( strlen($html) > 0 ) {
