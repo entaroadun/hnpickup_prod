@@ -62,7 +62,12 @@ function get_posts_from_dom ( $dom, $page, $etime ) {
 	$url = $element->childNodes->item(3)->childNodes->item(0)->getAttribute('href');
 	$points = preg_replace('/ points?$/','',$element->nextSibling->childNodes->item(1)->childNodes->item(1)->textContent);
 	$user = $element->nextSibling->childNodes->item(1)->childNodes->item(3)->textContent;
-	$posttime = preg_replace('/ ago$/','',$element->nextSibling->childNodes->item(1)->childNodes->item(5)->textContent);
+	// -- is this a hire post
+	if ( $element->nextSibling->childNodes->item(1)->childNodes->length >= 5 ) {
+	  $posttime = preg_replace('/ ago$/','',$element->nextSibling->childNodes->item(1)->childNodes->item(5)->textContent);
+	} else {
+	  $posttime = '';
+	}
 	// -- probably a hire post by ycombinator
 	if ( strlen($posttime) == 0 ) {
 	  $posttime = $points;
@@ -141,16 +146,19 @@ function create_posts_summary ( $name, $posts, $query ) {
   $max_story_url = '';
   foreach ( $posts as $key => $post ) {
     if ( $query($post) ) {
-      $ave_points += $post['points'];
-      $n_points ++;
-      if ( $min_points == 0 || $min_points > $post['points'] ) {
-	$min_points = $post['points'];
-      }
-      if ( $max_points == 0 || $max_points < $post['points'] ) {
-	$max_points = $post['points'];
-	$max_story_postid = $post['postid'];
-	$max_story_title = $post['title'];
-	$max_story_url = $post['url'];
+      // -- do not include hire posts
+      if ( $post['points'] > 0 ) {
+	$ave_points += $post['points'];
+	$n_points ++;
+	if ( $min_points == 0 || $min_points > $post['points'] ) {
+	  $min_points = $post['points'];
+	}
+	if ( $max_points == 0 || $max_points < $post['points'] ) {
+	  $max_points = $post['points'];
+	  $max_story_postid = $post['postid'];
+	  $max_story_title = $post['title'];
+	  $max_story_url = $post['url'];
+	}
       }
     }
   }

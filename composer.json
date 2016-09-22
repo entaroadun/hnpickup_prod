@@ -1,6 +1,6 @@
 {
   "require": {
-    "tomwalder/php-gds": "~2.0",
+    "tomwalder/php-gds": "~3.0",
     "twig/twig": "~1.0",
     "silex/silex": "~2.0"
   }
