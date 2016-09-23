@@ -46,6 +46,46 @@
      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
     ga('create','UA-26837634-1','auto');
     ga('send','pageview');
+
+    function populate_table_with_posts ( url, table_id, table_time_id ) {
+      $.getJSON(url).done(function(data){$(table_id).dataTable({
+	    data: data,
+	    destroy: true,
+	    paging: false,
+	    searching: false,
+	    ordering: false,
+	    info: false,
+	    fnRowCallback: function ( nRow, aData, iDisplayIndex, iDisplayIndexFull ) { if ( aData.compare == 1 ) { $(nRow).addClass('success'); } },
+	    columns: [{"data":"rank"},{"data":"title"},{"data":"points"}],
+	    columnDefs: [{
+	    targets: 1,
+	    render: function ( data, type, row, meta ) { return('<a href="'+row.url+'">'+data+'</a>'); }
+	    },{
+	    targets: 2,
+	    render: function ( data, type, row, meta ) { return('<a href="https://news.ycombinator.com/item?id='+row.postid+'">'+data+'</a>'); }
+	    }]
+	    });$(table_time_id).text(Date(data[1].etime*1000).toString());
+      });
+    }
+
+    function populate_graph_with_lines ( url, graph_id, field, click_callback ) {
+      var days = ['Sun','Mon','Tue','Wed','Thur','Fri','Sat'];
+      $.getJSON(url).done(function(data){
+	  new Morris.Line({
+	  resize: true,
+	  hideHover: true,
+          element: graph_id,
+          data: data,
+          xkey: 'etime',
+          ykeys: [field],
+          labels: [field],
+          dateFormat: function (x) { return new Date(x*1000).toString(); },
+	  xLabelFormat: function (x) { var d = new Date(x*1000); return days[d.getDay()]+' '+d.getHours()+':'+('0'+d.getMinutes()).slice(-2); },
+	  goals: [0.0]
+	  }).on('click',click_callback);
+	  });
+    }
+
     </script>
 
 </head>
@@ -57,27 +97,34 @@
         <!-- Navigation -->
         <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
             <div class="navbar-header">
-                <a class="navbar-brand" href="/report/dashboard/1">Hacker News Pickup Ratio</a>
+                <a class="navbar-brand" href="/report/dashboard">Hacker News Pickup Ratio</a>
+		<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+		  <span class="sr-only">Toggle navigation</span>
+		  <span class="icon-bar"></span>
+		  <span class="icon-bar"></span>
+		  <span class="icon-bar"></span>
+		</button>
             </div>
             <!-- /.navbar-header -->
+	    <!--
             <ul class="nav navbar-top-links navbar-right">
             </ul>
+	    -->
             <!-- /.navbar-top-links -->
-
-            <div class="navbar-default sidebar" role="navigation">
-                <div class="sidebar-nav navbar-collapse">
-                    <ul class="nav" id="side-menu">
+            <div class="collapse navbar-collapse navbar-default sidebar" role="navigation" id="bs-example-navbar-collapse-1">
+                <div class="sidebar-nav">
+                    <ul class="nav">
                         <li>
-                            <a href="/report/dashboard/1"><i class="fa fa-dashboard fa-fw"></i> Full Dashboard</a>
+                            <a href="/report/dashboard"><i class="fa fa-dashboard fa-fw"></i> Full Dashboard</a>
                         </li>
                         <li>
                             <a href="/report/pickup"><i class="fa fa-line-chart fa-fw"></i> Pickup Ratio Chart</a>
                         </li>
                         <li>
-                            <a href="/report/news/1"><i class="fa fa-table fa-fw"></i> Rewind News Table</a>
+                            <a href="/report/news"><i class="fa fa-table fa-fw"></i> Rewind News Table</a>
                         </li>
                         <li>
-                            <a href="/report/newest/1"><i class="fa fa-table fa-fw"></i> Rewind Newest Table</a>
+                            <a href="/report/newest"><i class="fa fa-table fa-fw"></i> Rewind Newest Table</a>
                         </li>
                     </ul>
                 </div>
