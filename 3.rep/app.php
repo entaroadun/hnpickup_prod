@@ -35,7 +35,7 @@ function get_summary ( $hnposts, $offset, $limit, $field ) {
   $data_rows = array();
   // -----------------------
   if ( !is_null($hnposts) && is_numeric($offset) && is_numeric($limit) ) {
-    $hnposts->query('SELECT * FROM HNPOSTS_SUMMARY ORDER BY etime DESC LIMIT @limit OFFSET @offset',['limit'=>$limit,'offset'=>($offset-1)]);
+    $hnposts->query('SELECT * FROM HNPOSTS_SUMMARY ORDER BY etime DESC LIMIT @limit OFFSET @offset',['limit'=>$limit*1,'offset'=>($offset-1)]);
     $rows = array_reverse($hnposts->fetchAll());
     $i = min($limit,count($rows));
     foreach ( $rows as $row ) {
