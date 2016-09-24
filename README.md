@@ -3,7 +3,7 @@
 
 Source of the data: [Hacker News](https://news.ycombinator.com/)
 
-Views of the data: [Hacker News Pickup Ratio](https://news.ycombinator.com/)
+Views of the data: [Hacker News Pickup Ratio](https://hnpickup.appspot.com)
 
 ## Intentions ##
 
@@ -21,3 +21,6 @@ Please enjoy the variety of the Hacker News data. Maybe they will bring you comf
 
 There was a slight success with [earlier version](https://github.com/entaroadun/hnpickup) so we decided to continue this journey.
 
+## Technology stack ##
+
+Application is build on top of Google App Engine using PHP, JS, HTML, and little bit of R. Data is stored using Google version of NoSQL called *datastore*.
