@@ -73,7 +73,7 @@ date_default_timezone_set('America/Los_Angeles');
 // =========================
 
 $APP->get('/', function (Application $app, Request $request) {
-  return($app->redirect('/report/dashboard'));
+  return($app->redirect('/report/three'));
 });
 
 // =========================
@@ -108,13 +108,13 @@ $APP->get('/summary/{offset}/{limit}/{field}.json', function ( $offset, $limit, 
 
 $APP->get('/report/three', function ( Application $app, Request $request ) {
   $params = $request->query->all();
-  if ( is_null($params['line_values']) || is_array($params['line_values']) ) {
+  if ( !isset($params['line_values']) || is_array($params['line_values']) ) {
     $params['line_values'] = 'news_pickup_ratio';
   }
-  if ( is_null($params['data_size']) ) {
+  if ( !isset($params['data_size']) ) {
     $params['data_size'] = 50;
   }
-  if ( is_null($params['table_values']) || !is_array($params['table_values']) ) {
+  if ( !isset($params['table_values']) || !is_array($params['table_values']) ) {
     $params['table_values'] = ['news','newest'];
   }
   return($app['twig']->render('three.html',['report_name'=>'Hacker Comparisons','line_values'=>$params['line_values'],'data_size'=>$params['data_size'],'table_values'=>$params['table_values']]));
@@ -124,13 +124,13 @@ $APP->get('/report/three', function ( Application $app, Request $request ) {
 
 $APP->get('/report/two', function ( Application $app, Request $request) {
   $params = $request->query->all();
-  if ( is_null($params['line_values']) || is_array($params['line_values']) ) {
+  if ( !isset($params['line_values']) || is_array($params['line_values']) ) {
     $params['line_values'] = 'news_summary';
   }
-  if ( is_null($params['data_size']) ) {
+  if ( !isset($params['data_size']) ) {
     $params['data_size'] = 50;
   }
-  if ( is_null($params['table_values']) || is_array($params['table_values']) ) {
+  if ( !isset($params['table_values']) || is_array($params['table_values']) ) {
     $params['table_values'] = 'news';
   }
   return($app['twig']->render('two.html',['report_name'=>'Hacker Rewind Tables','line_values'=>$params['line_values'],'data_size'=>$params['data_size'],'table_values'=>$params['table_values']]));
@@ -140,13 +140,13 @@ $APP->get('/report/two', function ( Application $app, Request $request) {
 
 $APP->get('/report/one', function ( Application $app, Request $request) {
   $params = $request->query->all();
-  if ( is_null($params['line_values']) || !is_array($params['line_values']) ) {
+  if ( !isset($params['line_values']) || !is_array($params['line_values']) ) {
     $params['line_values'] = ['news_summary','newest_summary'];
   }
-  if ( is_null($params['data_size']) ) {
+  if ( !isset($params['data_size']) ) {
     $params['data_size'] = 50;
   }
-  if ( is_null($params['table_values']) || is_array($params['table_values']) ) {
+  if ( !isset($params['table_values']) || is_array($params['table_values']) ) {
     $params['table_values'] = 'news';
   }
   return($app['twig']->render('one.html',['report_name'=>'Hacker Line Charts','line_values'=>$params['line_values'],'data_size'=>$params['data_size'],'table_values'=>$params['table_values']]));
