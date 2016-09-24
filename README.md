@@ -23,4 +23,11 @@ There was a slight success with [earlier version](https://github.com/entaroadun/
 
 ## Technology stack ##
 
-Application is build on top of Google App Engine using PHP, JS, HTML, and little bit of R. Data is stored using Google version of NoSQL called *datastore*. We use Google Analytics to track app usage.
+Application is build on top of Google App Engine using PHP, JS, HTML, and little bit of R. Data is stored using Google version of NoSQL called *datastore*. We use Google Analytics to track app usage. Application has three main components:
+
+1. Data collection (ETL)
+2. Data mining (DM)
+3. Reporint (Visualization)
+
+If all three parts are in a perfect harmony then we should get those glorified *actionable insights* that everyone is talking about.
+
