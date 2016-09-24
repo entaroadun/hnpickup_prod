@@ -117,7 +117,7 @@ $APP->get('/report/three', function ( Application $app, Request $request ) {
   if ( !isset($params['table_values']) || !is_array($params['table_values']) ) {
     $params['table_values'] = ['news','newest'];
   }
-  return($app['twig']->render('three.html',['report_name'=>'Hacker Comparisons','line_values'=>$params['line_values'],'data_size'=>$params['data_size'],'table_values'=>$params['table_values']]));
+  return($app['twig']->render('three.html',['report_name'=>'Hacker News Comparisons','line_values'=>$params['line_values'],'data_size'=>$params['data_size'],'table_values'=>$params['table_values']]));
 });
 
 // =========================
