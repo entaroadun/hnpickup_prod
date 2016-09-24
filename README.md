@@ -27,7 +27,7 @@ Application is build on top of Google App Engine using PHP, JS, HTML, and little
 
 1. Data collection (ETL)
 2. Data mining (DM)
-3. Reporint (Visualization)
+3. Reporting (Visualization)
 
 If all three parts are in a perfect harmony then we should get those glorified *actionable insights* that everyone is talking about.
 
