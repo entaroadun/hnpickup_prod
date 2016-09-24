@@ -19,9 +19,6 @@
 
     <!-- DataTables CSS -->
     <link href="/libs/datatables-plugins/dataTables.bootstrap.css" rel="stylesheet">
-
-    <!-- DataTables Responsive CSS -->
-    <link href="/libs/datatables-responsive/dataTables.responsive.css" rel="stylesheet">
  
     <!-- Custom CSS -->
     <link href="/libs/sb-admin-2/css/sb-admin-2.min.css" rel="stylesheet">
@@ -46,7 +43,6 @@
      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
     ga('create','UA-26837634-1','auto');
     ga('send','pageview');
-
     function populate_table_with_posts ( url, table_id, table_time_id ) {
       $.getJSON(url).done(function(data){$(table_id).dataTable({
 	    data: data,
@@ -55,6 +51,7 @@
 	    searching: false,
 	    ordering: false,
 	    info: false,
+	    autoWidth: false,
 	    fnRowCallback: function ( nRow, aData, iDisplayIndex, iDisplayIndexFull ) { if ( aData.compare == 1 ) { $(nRow).addClass('success'); } },
 	    columns: [{"data":"rank"},{"data":"title"},{"data":"points"}],
 	    columnDefs: [{
@@ -64,10 +61,10 @@
 	    targets: 2,
 	    render: function ( data, type, row, meta ) { return('<a href="https://news.ycombinator.com/item?id='+row.postid+'">'+data+'</a>'); }
 	    }]
-	    });$(table_time_id).text(Date(data[1].etime*1000).toString());
+	    });
+	  $(table_time_id).text(new Date(data[0].etime*1000).toString());
       });
     }
-
     function populate_graph_with_lines ( url, graph_id, field, click_callback ) {
       var days = ['Sun','Mon','Tue','Wed','Thur','Fri','Sat'];
       $.getJSON(url).done(function(data){
@@ -85,7 +82,6 @@
 	  }).on('click',click_callback);
 	  });
     }
-
     </script>
 
 </head>
@@ -140,15 +136,34 @@
                 </div>
                 <!-- /.col-lg-12 -->
             </div>
-            <!-- /.row -->
-	    {% block first_row %}
+            <!-- /.rows -->
+	    {% block views %}
 	    {% endblock %}
-            <!-- /.row -->
-	    {% block second_row %}
-	    {% endblock %}
-            <!-- /.row -->
-	    {% block third_row %}
-	    {% endblock %}
+            <!-- /.rows -->
+	    <!-- /.row -->
+	    <div class="row">
+	      <div class="col-lg-12">
+	        <div class="panel panel-info">
+	          <div class="panel-heading">
+	            Hacker News Pickup Ratio Documentation
+	          </div>
+	          <div class="panel-body">
+	            <p>
+		    Hacker News Pickup Ratio aims to understand web user behavior. It seems that Hacker News models some kind of closed system of people. There are three types of customers that come to Hacker News: <b>finders</b>, <b>adopters</b> and <b>viewer</b>. Finders search the Internet for interesting information to <i>post</i> it on Hacker News. They might write their own posts. Adopters look at the <i>newest</i> articles and up vote them if they judge them to be interesting. Viewers wait for finders and adopters to do the quality check for them. They do not want to be bothered by a random noise of the Internet. Viewers just wait for the articles at the front <i>news</i> page.
+		    </p>
+		    <p>
+		    This creates an interesting dynamics that generalizes over variety of marketing problems in the worlds of commercial products. This is the main reason why we set up to study these cohorts of users. Every finder is like a product owner that hopes for a wide adoption. This cannot be achieved without aiming at people that are the most passionate about some narrow domain of life. They start evangelizing so the rest can listen and the product becomes profitable.
+		    </p>
+		    <p>
+		    Knowing when is a good time to post on Hacker News is almost like knowing how to market a product. Hacker News simplifies this situation. All we need to know is how many adopters are currently reading the newest posts. But this statistics is hidden from us – like in the real world. We can only monitor the number of votes per newest post. There is also competition lurking. If too many people are posting then none of the posts will get a chance to be up voted by the adopters. But once a post gets to the front news page, then there is just smooth sailing ...
+		    </p>
+		    <p>
+		    Please enjoy the variety of the Hacker News data. Maybe they will bring you comfort and illusion that you know more than you did before you came here. We are hoping to find some
+		    </p>
+	          </div>
+	       </div>
+	       <!-- /.col-lg-12 -->
+	    </div>
             <!-- /.row -->
         </div>
         <!-- /#page-wrapper -->
@@ -166,8 +181,7 @@
 
     <!-- DataTables JavaScript -->
     <script src="/libs/datatables/js/jquery.dataTables.min.js"></script>
-    <script src="/libs/datatables-plugins/dataTables.bootstrap.min.js"></script>
-    <script src="/libs/datatables-responsive/dataTables.responsive.js"></script>
+    <script src="/libs/datatables/js/dataTables.bootstrap.min.js"></script>
     
     <!-- Morris Charts JavaScript -->
     <script src="/libs/raphael/raphael.min.js"></script>
