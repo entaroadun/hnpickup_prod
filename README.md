@@ -17,7 +17,7 @@ But this statistics is hidden from us – like in the real world. We can only mo
 
 Please enjoy the variety of the Hacker News data. Maybe they will bring you comfort and illusion that you know more than you did before you came here. We are hoping to find something too.
 
-## Previous Versions ##
+## Previous Version ##
 
-There was a slight success with [earlier version](https://github.com/entaroadun/hnpickup) so we decided to continue
+There was a slight success with [earlier version](https://github.com/entaroadun/hnpickup) so we decided to continue this journey.
 
