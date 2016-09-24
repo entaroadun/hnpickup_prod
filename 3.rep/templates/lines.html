@@ -1,10 +1,6 @@
-{% extends "report.html" %} 
-            {% block first_row %}
-            <div class="row">
-                <div class="col-lg-12">
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            <i class="fa fa-bar-chart-o fa-fw"></i> Area Chart Example
+                            <i class="fa fa-line-chart fa-fw"></i> Hacker {{ values|replace('_',' ')|title }} 
                             <div class="pull-right">
                                 <div class="btn-group">
                                 </div>
@@ -12,12 +8,8 @@
                         </div>
                         <!-- /.panel-heading -->
                         <div class="panel-body">
-                            <div id="morris-area-chart"></div>
+                            <div id="{{ values }}-line"></div>
                         </div>
                         <!-- /.panel-body -->
                     </div>
                     <!-- /.panel -->
-                </div>
-                <!-- /.col-lg-12 -->
-            </div>
-	    {% endblock %}

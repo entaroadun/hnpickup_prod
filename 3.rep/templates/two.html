@@ -1,0 +1,22 @@
+{% extends "report.html" %} 
+            {% block views %}
+            <div class="row">
+                <div class="col-lg-12">
+		  {% include 'lines.html' with {'values':line_values} %}
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+	    <!-- /.row -->
+            <div class="row">
+                <div class="col-lg-12">
+		  {% include 'table.html' with {'page':table_values} %}
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+	    {% endblock %}
+            {% block script %}
+            <script>
+	      {% include 'lines.js' with {'values':line_values} %}
+	      {% include 'table.js' with {'page':table_values} %}
+	    </script>
+	    {% endblock %}

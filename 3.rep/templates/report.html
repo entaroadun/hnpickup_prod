@@ -18,7 +18,7 @@
     <link href="/libs/metisMenu/metisMenu.min.css" rel="stylesheet">
 
     <!-- DataTables CSS -->
-    <link href="/libs/datatables-plugins/dataTables.bootstrap.css" rel="stylesheet">
+    <link href="/libs/datatables/css/dataTables.bootstrap.min.css" rel="stylesheet">
  
     <!-- Custom CSS -->
     <link href="/libs/sb-admin-2/css/sb-admin-2.min.css" rel="stylesheet">
@@ -65,17 +65,20 @@
 	  $(table_time_id).text(new Date(data[0].etime*1000).toString());
       });
     }
-    function populate_graph_with_lines ( url, graph_id, field, click_callback ) {
+    function populate_graph_with_lines ( url, graph_id, click_callback ) {
       var days = ['Sun','Mon','Tue','Wed','Thur','Fri','Sat'];
       $.getJSON(url).done(function(data){
+	  var fields = Object.keys(data[0]);
+	  fields.splice(fields.indexOf('etime'),1);
+	  fields.splice(fields.indexOf('offset'),1);
 	  new Morris.Line({
 	  resize: true,
 	  hideHover: true,
           element: graph_id,
           data: data,
           xkey: 'etime',
-          ykeys: [field],
-          labels: [field],
+          ykeys: fields,
+          labels: fields,
           dateFormat: function (x) { return new Date(x*1000).toString(); },
 	  xLabelFormat: function (x) { var d = new Date(x*1000); return days[d.getDay()]+' '+d.getHours()+':'+('0'+d.getMinutes()).slice(-2); },
 	  goals: [0.0]
@@ -93,7 +96,7 @@
         <!-- Navigation -->
         <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
             <div class="navbar-header">
-                <a class="navbar-brand" href="/report/dashboard">Hacker News Pickup Ratio</a>
+                <a class="navbar-brand" href="/report/three">Hacker News Pickup Ratio</a>
 		<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
 		  <span class="sr-only">Toggle navigation</span>
 		  <span class="icon-bar"></span>
@@ -111,16 +114,19 @@
                 <div class="sidebar-nav">
                     <ul class="nav">
                         <li>
-                            <a href="/report/dashboard"><i class="fa fa-dashboard fa-fw"></i> Full Dashboard</a>
+                            <a href="/report/three?line_values=news_pickup_ratio&table_values[]=news&table_values[]=newest"><i class="fa fa-dashboard fa-fw"></i> Hacker Comparisons</a>
                         </li>
                         <li>
-                            <a href="/report/pickup"><i class="fa fa-line-chart fa-fw"></i> Pickup Ratio Chart</a>
+                            <a href="/report/one?line_values[]=news_summary&line_values[]=newest_summary"><i class="fa fa-line-chart fa-fw"></i> Hacker Summary Lines</a>
                         </li>
                         <li>
-                            <a href="/report/news"><i class="fa fa-table fa-fw"></i> Rewind News Table</a>
+                            <a href="/report/two?line_values=news_summary&table_values=news"><i class="fa fa-table fa-fw"></i> Rewind News Table</a>
                         </li>
                         <li>
-                            <a href="/report/newest"><i class="fa fa-table fa-fw"></i> Rewind Newest Table</a>
+                            <a href="/report/two?line_values=newest_summary&table_values=newest"><i class="fa fa-table fa-fw"></i> Rewind Newest Table</a>
+                        </li>
+                        <li>
+                            <a href="https://github.com/entaroadun/hnpickup_prod"><i class="fa fa-github-square fa-fw"></i> Github Project</a>
                         </li>
                     </ul>
                 </div>
@@ -158,7 +164,7 @@
 		    Knowing when is a good time to post on Hacker News is almost like knowing how to market a product. Hacker News simplifies this situation. All we need to know is how many adopters are currently reading the newest posts. But this statistics is hidden from us – like in the real world. We can only monitor the number of votes per newest post. There is also competition lurking. If too many people are posting then none of the posts will get a chance to be up voted by the adopters. But once a post gets to the front news page, then there is just smooth sailing ...
 		    </p>
 		    <p>
-		    Please enjoy the variety of the Hacker News data. Maybe they will bring you comfort and illusion that you know more than you did before you came here. We are hoping to find some
+		    Please enjoy the variety of the Hacker News data. Maybe they will bring you comfort and illusion that you know more than you did before you came here. We are hoping to find something too.
 		    </p>
 	          </div>
 	       </div>

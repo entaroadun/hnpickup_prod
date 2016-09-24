@@ -39,10 +39,19 @@ function get_summary ( $hnposts, $offset, $limit, $field ) {
     $rows = array_reverse($hnposts->fetchAll());
     $i = min($limit,count($rows));
     foreach ( $rows as $row ) {
-      $value = $row->newest_max-$row->news_min;
-      $value_sign = ($value>=0) ? 1 : -1;
-      $log_value = round(log(abs($value)+1,2),3)*$value_sign;
-      $data_rows[] = ['etime'=>($row->etime)*1,'ratio'=>$log_value,'offset'=>$offset+$i-1];
+      if ( $field == 'news_pickup_ratio' ) {
+	$value = $row->newest_max-$row->news_min;
+	$value_sign = ($value>=0) ? 1 : -1;
+	$log_value = round(log(abs($value)+1,2),3)*$value_sign;
+	$data_rows[] = ['etime'=>($row->etime)*1,'ratio'=>$log_value,'offset'=>$offset+$i-1];
+      } else if ( $field == 'news_summary' ) {
+	$data_rows[] = ['etime'=>($row->etime)*1,'news_min'=>log($row->news_min+1,2),'news_average'=>log($row->news_ave+1,2),'news_max'=>log($row->news_max+1,2),'offset'=>$offset+$i-1];
+      } else if ( $field == 'newest_summary' ) {
+	$data_rows[] = ['etime'=>($row->etime)*1,'newest_min'=>log($row->newest_min+1,2),'newest_average'=>log($row->newest_ave+1,2),'newest_max'=>log($row->newest_max+1,2),'offset'=>$offset+$i-1];
+      } else {
+	$data_rows[] = ['error'];
+	break;
+      }
       $i --;
     }
   }
@@ -97,26 +106,50 @@ $APP->get('/summary/{offset}/{limit}/{field}.json', function ( $offset, $limit, 
 
 // =========================
 
-$APP->get('/report/dashboard', function ( Application $app, Request $request ) {
-  return($app['twig']->render('dashboard.html',array('report_name'=>'Full Dashboard')));
+$APP->get('/report/three', function ( Application $app, Request $request ) {
+  $params = $request->query->all();
+  if ( is_null($params['line_values']) || is_array($params['line_values']) ) {
+    $params['line_values'] = 'news_pickup_ratio';
+  }
+  if ( is_null($params['data_size']) ) {
+    $params['data_size'] = 50;
+  }
+  if ( is_null($params['table_values']) || !is_array($params['table_values']) ) {
+    $params['table_values'] = ['news','newest'];
+  }
+  return($app['twig']->render('three.html',['report_name'=>'Hacker Comparisons','line_values'=>$params['line_values'],'data_size'=>$params['data_size'],'table_values'=>$params['table_values']]));
 });
 
 // =========================
 
-$APP->get('/report/news', function ( Application $app, Request $request) {
-  return($app['twig']->render('news.html',array('report_name'=>'Hacker News Page Rewind')));
+$APP->get('/report/two', function ( Application $app, Request $request) {
+  $params = $request->query->all();
+  if ( is_null($params['line_values']) || is_array($params['line_values']) ) {
+    $params['line_values'] = 'news_summary';
+  }
+  if ( is_null($params['data_size']) ) {
+    $params['data_size'] = 50;
+  }
+  if ( is_null($params['table_values']) || is_array($params['table_values']) ) {
+    $params['table_values'] = 'news';
+  }
+  return($app['twig']->render('two.html',['report_name'=>'Hacker Rewind Tables','line_values'=>$params['line_values'],'data_size'=>$params['data_size'],'table_values'=>$params['table_values']]));
 });
 
 // =========================
 
-$APP->get('/report/newest', function ( Application $app, Request $request ) {
-  return($app['twig']->render('newest.html',array('report_name'=>'Hacker Newest Page Rewind')));
-});
-
-// =========================
-
-$APP->get('/report/pickup', function ( Application $app, Request $request ) {
-  return($app['twig']->render('pickup.html',array('report_name'=>'Hacker News Pickup Ratio')));
+$APP->get('/report/one', function ( Application $app, Request $request) {
+  $params = $request->query->all();
+  if ( is_null($params['line_values']) || !is_array($params['line_values']) ) {
+    $params['line_values'] = ['news_summary','newest_summary'];
+  }
+  if ( is_null($params['data_size']) ) {
+    $params['data_size'] = 50;
+  }
+  if ( is_null($params['table_values']) || is_array($params['table_values']) ) {
+    $params['table_values'] = 'news';
+  }
+  return($app['twig']->render('one.html',['report_name'=>'Hacker Line Charts','line_values'=>$params['line_values'],'data_size'=>$params['data_size'],'table_values'=>$params['table_values']]));
 });
 
 // =========================
