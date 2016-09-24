@@ -23,4 +23,4 @@ There was a slight success with [earlier version](https://github.com/entaroadun/
 
 ## Technology stack ##
 
-Application is build on top of Google App Engine using PHP, JS, HTML, and little bit of R. Data is stored using Google version of NoSQL called *datastore*.
+Application is build on top of Google App Engine using PHP, JS, HTML, and little bit of R. Data is stored using Google version of NoSQL called *datastore*. We use Google Analytics to track app usage.
