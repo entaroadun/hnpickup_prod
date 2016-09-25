@@ -73,6 +73,8 @@ function get_summary ( $etimes, $hnposts, $offset, $limit, $field ) {
 	$data_rows[] = ['etime'=>($row->etime)*1,'news_min'=>log($row->news_min+1,2),'news_average'=>log($row->news_ave+1,2),'news_max'=>log($row->news_max+1,2),'offset'=>$offset+$i-1];
       } else if ( $field == 'newest_summary' ) {
 	$data_rows[] = ['etime'=>($row->etime)*1,'newest_min'=>log($row->newest_min+1,2),'newest_average'=>log($row->newest_ave+1,2),'newest_max'=>log($row->newest_max+1,2),'offset'=>$offset+$i-1];
+      } else if ( $field == 'all_summary' ) {
+	$data_rows[] = ['etime'=>($row->etime)*1,'newest_min'=>$row->newest_min,'newest_average'=>$row->newest_ave,'newest_max'=>$row->newest_max,'news_min'=>$row->news_min,'news_average'=>$row->news_ave,'news_max'=>$row->news_max,     'both_min'=>$row->both_min,'both_average'=>$row->both_ave,'both_max'=>$row->both_max,'offset'=>$offset+$i-1];
       } else {
 	$data_rows[] = ['error'];
 	break;
