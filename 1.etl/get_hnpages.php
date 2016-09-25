@@ -177,10 +177,56 @@ function create_posts_summary ( $name, $posts, $query ) {
 
 // =========================
 
+function count_etimes_entires ( $hnetimes_ds, $hnposts_summary_ds, $etime ) {
+
+  $entry_counts = 0;
+  // -----------------------
+  // -- get last entry
+  $hnetimes_ds->query('SELECT * FROM HNETIMES ORDER BY etime DESC');
+  $latest_etime = $hnetimes_ds->fetchOne(); 
+  $last_etime = $latest_etime->etime;
+  $last_etimeid = $latest_etime->etimeid;
+  if ( is_null($last_etime) || is_null($last_etimeid) ) {
+    $last_etimeid = 0;
+    $last_etime = 0;
+  }
+  // -- check what is missing
+  $hnposts_summary_ds->query('SELECT * FROM HNPOSTS_SUMMARY WHERE etime > @last_etime ORDER BY etime ASC',['last_etime'=>intval($last_etime)]);
+  $missing_etime = array();
+  $missing_etimeid = array();
+  while ( $rows = $hnposts_summary_ds->fetchPage(50) ) {
+    foreach ( $rows as $row ) {
+      $missing_etime[] = intval($row->etime);
+    }
+  }
+  if ( count($missing_etime) ) {
+    $missing_etimes = sort($missing_etime);
+    $last_etimeid = intval($last_etimeid);
+    foreach ( $missing_etime as $this_etime ) {
+      $last_etimeid ++;
+      $missing_etimeid[] = $last_etimeid;
+    }
+    $missing_data = array();
+    for ( $i = 0; $i < count($missing_etimeid); $i++ ) {
+      $missing_data[] = $hnetimes_ds->createEntity(['etime'=>$missing_etime[$i],'etimeid'=>$missing_etimeid[$i]]);
+    }
+    $hnetimes_ds->upsert($missing_data);
+    $entry_counts = $missing_etimeid[(count($missing_etimeid)-1)];
+  } else {
+    $entry_counts = $last_etimeid;
+  }
+  // -----------------------
+  return($entry_counts);
+
+}
+
+// =========================
+
 $etime = time();
 syslog(LOG_INFO,"Starting at ".$etime);
 $hnposts_ds = create_connection('HNPOSTS');
 $hnposts_summary_ds = create_connection('HNPOSTS_SUMMARY');
+$hnetimes_ds = create_connection('HNETIMES');
 
 // - - - - - - - - -
 
@@ -203,6 +249,9 @@ $newest_inserted = insert_posts_into_datastore($newest_posts,$hnposts_ds);
 $summary_inserted = insert_posts_into_datastore($all_summary,$hnposts_summary_ds);
 echo "Inserted ".count($news_inserted)." news and ".count($newest_inserted)." newest posts with ".count($summary_inserted)." summary at time ".time()."...\n";
 syslog(LOG_INFO,"Inserted ".count($news_inserted)." news and ".count($newest_inserted)." newest posts with ".count($summary_inserted)." summary at time ".time()."...\n");
+$entry_counts = count_etimes_entires($hnetimes_ds,$hnposts_summary_ds,$etime);
+echo "Total entires $entry_counts ...\n";
+syslog(LOG_INFO,"Total entires $entry_counts ...\n");
 
 // - - - - - - - - -
 

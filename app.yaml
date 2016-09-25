@@ -5,7 +5,6 @@ threadsafe: true
 handlers:
 - url: /start_etl
   script: 1.etl/get_hnpages.php
-  login: admin
 - url: /robots\.txt
   static_files: 4.stat/robots.txt
   upload: 4.stat/robots.txt
