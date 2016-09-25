@@ -11,12 +11,35 @@ putenv('GOOGLE_APPLICATION_CREDENTIALS=../0.conf/hnpickup_key.json');
 
 // =========================
 
-function get_hnposts ( $hnposts, $offset, $page ) {
+function convert_offset_to_etime ( $etimes, $offset ) {
+
+  $this_etime = 0;
+  // -----------------------
+  if ( !is_null($etimes) && !is_null($offset) && is_numeric($offset) ) {
+    // -- get the right etime (offset -> etimeid -> etime)
+    $etimes->query('SELECT * FROM HNETIMES ORDER BY etime DESC');
+    $row = $etimes->fetchOne();
+    $latest_etimeid = $row->etimeid;
+    $latest_etime = $row->etime;
+    $needed_etimeid = $latest_etimeid-$offset+1;
+    $etimes->query('SELECT * FROM HNETIMES WHERE etimeid = @needed_etimeid',['needed_etimeid'=>intval($needed_etimeid)]);
+    $row = $etimes->fetchOne();
+    $this_etime = intval($row->etime);
+  }
+  // -----------------------
+  return($this_etime);
+
+}
+
+// =========================
+
+function get_hnposts ( $etimes, $hnposts, $offset, $page ) {
 
   $table_rows = array();
   // -----------------------
   if ( !is_null($hnposts) && is_numeric($offset) && ( $page == 'news' || $page == 'newest' ) ) {
-    $hnposts->query('SELECT * FROM HNPOSTS WHERE page = @page ORDER BY etime DESC LIMIT @limit OFFSET @offset',['limit'=>30,'offset'=>(($offset-1)*30),'page'=>$page]);
+    $this_etime = convert_offset_to_etime($etimes,$offset);
+    $hnposts->query('SELECT * FROM HNPOSTS WHERE page = @page AND etime = @this_etime',['page'=>$page,'this_etime'=>$this_etime]);
     $rows = $hnposts->fetchAll();
     usort($rows,function($a,$b){return(($a->rank<$b->rank)?-1:1);});
     foreach ( $rows as $row ) {
@@ -30,12 +53,14 @@ function get_hnposts ( $hnposts, $offset, $page ) {
 
 // =========================
 
-function get_summary ( $hnposts, $offset, $limit, $field ) {
+function get_summary ( $etimes, $hnposts, $offset, $limit, $field ) {
 
   $data_rows = array();
   // -----------------------
   if ( !is_null($hnposts) && is_numeric($offset) && is_numeric($limit) ) {
-    $hnposts->query('SELECT * FROM HNPOSTS_SUMMARY ORDER BY etime DESC LIMIT @limit OFFSET @offset',['limit'=>$limit*1,'offset'=>($offset-1)]);
+    $start_etime = convert_offset_to_etime($etimes,$offset);
+    $end_etime = convert_offset_to_etime($etimes,$offset+$limit-1);
+    $hnposts->query('SELECT * FROM HNPOSTS_SUMMARY WHERE etime <= @start_etime AND etime >= @end_etime ORDER BY etime DESC',['start_etime'=>intval($start_etime),'end_etime'=>intval($end_etime)]);
     $rows = array_reverse($hnposts->fetchAll());
     $i = min($limit,count($rows));
     foreach ( $rows as $row ) {
@@ -66,8 +91,9 @@ function get_summary ( $hnposts, $offset, $limit, $field ) {
 $APP = new Silex\Application();
 $APP->register(new Silex\Provider\TwigServiceProvider());
 $APP['twig.path'] = [ __DIR__.'/templates' ];
-$APP['hnposts'] = new \GDS\Store('HNPOSTS');#,new \GDS\Gateway\RESTv1('hnpickup'));
-$APP['summary'] = new \GDS\Store('HNPOSTS_SUMMARY');#,new \GDS\Gateway\RESTv1('hnpickup'));
+$APP['hnposts'] = new \GDS\Store('HNPOSTS',new \GDS\Gateway\RESTv1('hnpickup'));
+$APP['summary'] = new \GDS\Store('HNPOSTS_SUMMARY',new \GDS\Gateway\RESTv1('hnpickup'));
+$APP['etimes'] = new \GDS\Store('HNETIMES',new \GDS\Gateway\RESTv1('hnpickup'));
 date_default_timezone_set('America/Los_Angeles');
 
 // =========================
@@ -83,7 +109,8 @@ $APP->get('/hnposts/{offset}/{page}.json', function ( $offset, $page, Applicatio
   // - - - - - - - - -
   if ( !($table_rows = $memcache->get("hnposts/$offset/$page")) ) {
     $hnposts = $app['hnposts'];
-    $table_rows = get_hnposts($hnposts,$offset,$page);
+    $etimes = $app['etimes'];
+    $table_rows = get_hnposts($etimes,$hnposts,$offset,$page);
     $memcache->set("hnposts/$offset/$page",$table_rows,time()+15*60);
   }
   // - - - - - - - - -
@@ -97,7 +124,8 @@ $APP->get('/summary/{offset}/{limit}/{field}.json', function ( $offset, $limit, 
   // - - - - - - - - -
   if ( !($table_rows = $memcache->get("summary/$offset/$limit/$field")) ) {
     $summary = $app['summary'];
-    $table_rows = get_summary($summary,$offset,$limit,$field);
+    $etimes = $app['etimes'];
+    $table_rows = get_summary($etimes,$summary,$offset,$limit,$field);
     $memcache->set("summary/$offset/$limit/$field",$table_rows,time()+15*60);
   }
   // - - - - - - - - -
@@ -112,7 +140,7 @@ $APP->get('/report/three', function ( Application $app, Request $request ) {
     $params['line_values'] = 'news_pickup_ratio';
   }
   if ( !isset($params['data_size']) ) {
-    $params['data_size'] = 50;
+    $params['data_size'] = 48;
   }
   if ( !isset($params['table_values']) || !is_array($params['table_values']) ) {
     $params['table_values'] = ['news','newest'];
@@ -128,7 +156,7 @@ $APP->get('/report/two', function ( Application $app, Request $request) {
     $params['line_values'] = 'news_summary';
   }
   if ( !isset($params['data_size']) ) {
-    $params['data_size'] = 50;
+    $params['data_size'] = 48;
   }
   if ( !isset($params['table_values']) || is_array($params['table_values']) ) {
     $params['table_values'] = 'news';
