@@ -23,7 +23,7 @@ There was a slight success with [earlier version](https://github.com/entaroadun/
 
 ## Technology stack ##
 
-Application is build on top of Google App Engine using PHP, JS, HTML, and little bit of R. Data is stored using Google version of NoSQL called *datastore*. We use Google Analytics to track app usage. Application has three main components:
+Application is build on top of Google App Engine using PHP (twig, silex, php-gds), JS (jquery, morrisjs, raphael, datatable, bootstrap), HTML/CSS (bootstrap, sb-admin-2, metisMenu, font-awesome), and little bit of R. Data is stored using Google version of NoSQL called *datastore*. We use Google Analytics to track app usage. Application has three main components:
 
 1. Data collection (ETL)
 2. Data mining (DM)
