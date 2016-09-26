@@ -47,8 +47,9 @@ function populate_graph_with_lines ( url, graph_id, click_callback ) {
         labels: fields,
         dateFormat: function (x) { return new Date(x*1000).toString(); },
         xLabelFormat: function (x) { var d = new Date(x*1000); return days[d.getDay()]+' '+d.getHours()+':'+('0'+d.getMinutes()).slice(-2); },
+	yLabelFormat: function (y) { return (Math.pow(1.1,y)-1).toFixed(4); },
         goals: [0.0]
-        }).on('click',click_callback);
+        }).on('click',click_callback).on('touchstart',click_callback);
       });
 }
 

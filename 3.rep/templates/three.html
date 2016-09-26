@@ -2,7 +2,7 @@
             {% block views %}
             <div class="row">
                 <div class="col-lg-12">
-		  {% include 'lines.html' with {'values':line_values} %}
+		  {% include 'lines.html' with {'values':line_values[0]} %}
                 </div>
                 <!-- /.col-lg-12 -->
             </div>
@@ -20,7 +20,7 @@
 	    {% endblock %}
             {% block script %}
             <script>
-	      {% include 'lines.js' with {'values':line_values} %}
+	      {% include 'lines.js' with {'values':line_values[0]} %}
 	      {% include 'table.js' with {'page':table_values[0]} %}
 	      {% include 'table.js' with {'page':table_values[1]} %}
 	    </script>
