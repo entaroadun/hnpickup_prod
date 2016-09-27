@@ -7139,7 +7139,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            throw new Error("SVG container not found.");
 	        }
 	        var cnvs = $("svg"),
-	            css = "overflow:hidden;",
+	            css = "overflow:hidden;cursor:pointer;",
 	            isFloating;
 	        x = x || 0;
 	        y = y || 0;
