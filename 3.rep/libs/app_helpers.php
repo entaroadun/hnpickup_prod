@@ -52,9 +52,13 @@ function get_summary ( $etimes, $hnposts, $offset, $limit, $field ) {
     $start_etime = convert_offset_to_etime($etimes,$offset);
     $end_etime = convert_offset_to_etime($etimes,$offset+$limit-1);
     $hnposts->query('SELECT * FROM HNPOSTS_SUMMARY WHERE etime <= @start_etime AND etime >= @end_etime ORDER BY etime DESC',['start_etime'=>intval($start_etime),'end_etime'=>intval($end_etime)]);
-    $rows = array_reverse($hnposts->fetchAll());
-    $i = min($limit,count($rows));
-    foreach ( $rows as $row ) {
+    $all_rows = array();
+    while ( $rows = $hnposts->fetchPage(50) ) {
+      $all_rows = array_merge($all_rows,$rows);
+    }
+    $all_rows = array_reverse($all_rows);
+    $i = min($limit,count($all_rows));
+    foreach ( $all_rows as $row ) {
       if ( $field == 'news_pickup_ratio' ) {
 	$value = $row->newest_max-$row->news_min;
 	$value_sign = ($value>=0) ? 1 : -1;
