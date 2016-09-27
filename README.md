@@ -5,7 +5,7 @@ Source of the data: [Hacker News](https://news.ycombinator.com/)
 
 Views of the data: [Hacker News Pickup Ratio](https://hnpickup.appspot.com)
 
-## Intentions ##
+## Motivation ##
 
 Hacker News Pickup Ratio aims to understand web user behavior. It seems that Hacker News models some kind of closed system of people. There are three types of customers that come to Hacker News: <b>finders</b>, <b>adopters</b> and <b>viewers</b>. Finders search the Internet for interesting information to <i>post</i> it on Hacker News. They might write their own posts. Adopters look at the <i>newest</i> articles and up vote them if they judge them to be interesting. Viewers wait for finders and adopters to do the quality check for them. They do not want to be bothered by a random noise of the Internet. Viewers just wait for the articles at the front <i>news</i> page.
 
