@@ -7,6 +7,10 @@ ga('send','pageview');
 
 // ========================
 
+var iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
+// ========================
+
 function populate_table_with_posts ( url, table_id, table_time_id ) {
   $.getJSON(url).done(
     function(data){$(table_id).dataTable({
@@ -45,6 +49,7 @@ function populate_graph_with_lines ( url, graph_id, click_callback ) {
         xkey: 'etime',
         ykeys: fields,
         labels: fields,
+	hoverCallback: function(index, options, content) { if ( iOS ) { click_callback(index,options.data[index]); }; return(content); },
         dateFormat: function (x) { return new Date(x*1000).toString(); },
         xLabelFormat: function (x) { var d = new Date(x*1000); return days[d.getDay()]+' '+d.getHours()+':'+('0'+d.getMinutes()).slice(-2); },
 	yLabelFormat: function (y) { return (Math.pow(1.1,y)-1).toFixed(4); },
