@@ -49,7 +49,7 @@ process_csv <- function ( file_name = 'newest_data1.csv', main_var = 'points' ) 
   dat <- read.csv(file_name);
   dat <- unique(dat);
   mat <- aggregate(dat[[main_var]],list(dat$etime),function(x){x<-as.numeric(x);x[x==0]<-round(mean(x));return(sort(x));});
-  com <- aggregate(as.numeric(dat$compare)*as.numeric(dat$points),list(dat$etime),function(x){return(sum(as.numeric(x)))})[,2];
+  com <- aggregate(as.numeric(dat$compare),list(dat$etime),function(x){return(sum(as.numeric(x)))})[,2];
   MAT <- mat[,2];
   tim <- mat[,1];
   res <- cbind(MAT,com);
