@@ -34,7 +34,7 @@ function get_hnposts ( $etimes, $hnposts, $offset, $page ) {
     $rows = $hnposts->fetchAll();
     usort($rows,function($a,$b){return(($a->rank<$b->rank)?-1:1);});
     foreach ( $rows as $row ) {
-      $table_rows[] = ['rank'=>$row->rank,'title'=>$row->title,'url'=>$row->url,'points'=>$row->points,'postid'=>$row->postid,'compare'=>$row->compare,'etime'=>$row->etime];
+      $table_rows[] = ['rank'=>$row->rank,'title'=>$row->title,'url'=>$row->url,'points'=>$row->points,'postid'=>$row->postid,'compare'=>$row->compare,'etime'=>$row->etime,'posttime'=>$row->posttime,'user'=>$row->user];
     }
   }
   // -----------------------
