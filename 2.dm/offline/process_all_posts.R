@@ -7,7 +7,7 @@ NEWS_JSON <<- 'http://hnpickup.appspot.com/hnposts/##N##/news.json';
 
 ## ================
 
-get_json_data <- function ( start = 1, limit = 1000 ) {
+get_json_data <- function ( start = 1, limit = 1500 ) {
 
   last_etime     <- 1;
   n_slice        <- start;
