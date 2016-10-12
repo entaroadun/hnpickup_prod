@@ -1,16 +1,16 @@
 Line 59 get_hnpost error
 Prev/next on table
+Intro page (maybe some counters at the top)
 Memcache number to timestamp data (push to all apps)
 Memcache jsons by etime
 Morrisjs sync time with vis and table
 Show max story
 1st and 2nd derivate
-smoothing (3)
-Last 1 day, 1 h, 1 week, 1 month
+smoothing (3 - maybe a visual in JS)
+Last 1 day, 1 h, 1 week, 1 month (maybe a visual)
 Wikipedia comparison
 Download articles
 Issue with Ask HN
 Best of the week (highest score + highest rank)
 Best of the month
 URL redirect translate
-
