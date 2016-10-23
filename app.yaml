@@ -14,5 +14,7 @@ handlers:
   upload: 4.stat/favicon.ico
 - url: /libs
   static_dir: 4.stat/libs
+- url: /bower_components
+  static_dir: bower_components
 - url: /.*
   script: 3.rep/app.php

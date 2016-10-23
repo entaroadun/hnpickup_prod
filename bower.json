@@ -16,6 +16,12 @@
   ],
   "dependencies": {
     "morris.js": "morrisjs#^0.5.1",
-    "sb-admin-2": "*"
+    "sb-admin-2": "*",
+    "bootstrap": "^3.3.7",
+    "datatables": "^1.10.12",
+    "datatables-responsive": "^2.1.0",
+    "font-awesome": "^4.6.3",
+    "jquery": "^3.1.1",
+    "metisMenu": "^2.5.2"
   }
 }
