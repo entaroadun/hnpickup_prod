@@ -1,0 +1,21 @@
+{
+  "name": "hnpickup_prod",
+  "homepage": "https://github.com/entaroadun/hnpickup_prod",
+  "authors": [
+    "Pawel Matykiewicz"
+  ],
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "morris.js": "morrisjs#^0.5.1",
+    "sb-admin-2": "*"
+  }
+}
