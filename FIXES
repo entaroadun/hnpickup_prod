@@ -8,10 +8,12 @@ Show max story
 1st and 2nd derivate
 smoothing (3 - maybe a visual in JS)
 Last 1 day, 1 h, 1 week, 1 month (maybe a visual)
-Wikipedia comparison
+Wikipedia semantic comparison
 Download articles to nosql
-Issue with Ask HN
+Issue with Ask HN (discussion only)
 Best of the week (highest score + highest rank)
 Best of the month
 URL redirect translate
-Cookies
+Cookies, usernames, privacy statement
+nmp/bower (js package manager)
+use dc.js (https://dc-js.github.io/dc.js/)
