@@ -1,12 +1,13 @@
 Line 59 get_hnpost error -- GETTING TO KNOW THE ERROR
+Cookies, usernames, privacy statement -- ADDED UUID
 Issue with Ask HN (discussion only) -- FIXED
 Prev/next on table
 Intro page (maybe some counters at the top - README.md)
 Memcache number to timestamp data (push to all apps)
 Memcache jsons by etime
 Morrisjs sync time with vis and table
-Show max story
-1st and 2nd derivate
+Show max story (color coding)
+1st and 2nd derivate (best time prediction)
 smoothing (3 - maybe a visual in JS)
 Last 1 day, 1 h, 1 week, 1 month (maybe a visual)
 Wikipedia semantic comparison
@@ -14,7 +15,6 @@ Download articles to nosql
 Best of the week (highest score + highest rank)
 Best of the month
 URL redirect translate or record
-Cookies, usernames, privacy statement
 nmp/bower (js package manager)
 use dc.js (https://dc-js.github.io/dc.js/)
 decompose "get_summary" in app_helpers
