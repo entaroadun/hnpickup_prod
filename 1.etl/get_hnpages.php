@@ -55,35 +55,40 @@ function get_posts_from_dom ( $dom, $page, $etime ) {
     $elements = $finder->query("//tr[@class='athing']");
     if ( !is_null($elements) ) {
       foreach ( $elements as $element ) {
-	// -- basic post information
-	$postid = $element->getAttribute('id');
-	$rank = preg_replace('/\.$/','',$element->childNodes->item(0)->childNodes->item(0)->textContent);
-	$title = $element->childNodes->item(3)->childNodes->item(0)->textContent;
-	$url = $element->childNodes->item(3)->childNodes->item(0)->getAttribute('href');
-	$points = preg_replace('/ points?$/','',$element->nextSibling->childNodes->item(1)->childNodes->item(1)->textContent);
-	$user = $element->nextSibling->childNodes->item(1)->childNodes->item(3)->textContent;
-	// -- is this a hire post
-	if ( $element->nextSibling->childNodes->item(1)->childNodes->length > 5 ) {
-	  $posttime = preg_replace('/ ago$/','',$element->nextSibling->childNodes->item(1)->childNodes->item(5)->textContent);
+	if ( $element->nodeType == XML_ELEMENT_NODE ) {
+	  // -- basic HN post information
+	  $postid = $element->getAttribute('id');
+	  $rank = preg_replace('/\.$/','',$element->childNodes->item(0)->childNodes->item(0)->textContent);
+	  $title = $element->childNodes->item(3)->childNodes->item(0)->textContent;
+	  $url = $element->childNodes->item(3)->childNodes->item(0)->getAttribute('href');
+	  $points = preg_replace('/ points?$/','',$element->nextSibling->childNodes->item(1)->childNodes->item(1)->textContent);
+	  $user = $element->nextSibling->childNodes->item(1)->childNodes->item(3)->textContent;
+	  // -- is this a hire post
+	  if ( $element->nextSibling->childNodes->item(1)->childNodes->length > 5 ) {
+	    $posttime = preg_replace('/ ago$/','',$element->nextSibling->childNodes->item(1)->childNodes->item(5)->textContent);
+	  } else {
+	    $posttime = '';
+	  }
+	  // -- probably a hire post by ycombinator
+	  if ( strlen($posttime) == 0 ) {
+	    $posttime = $points;
+	    $points = '0';
+	    $user = '';
+	  }
+	  // -- convert time to minutes
+	  if ( preg_match('/minute/',$posttime) ) {
+	    $posttime = preg_replace('/ minutes?/','',$posttime)*1;
+	  } elseif ( preg_match('/hour/',$posttime) ) {
+	    $posttime = preg_replace('/ hours?/','',$posttime)*1*60;
+	  } elseif ( preg_match('/day/',$posttime) ) {
+	    $posttime = preg_replace('/ days?/','',$posttime)*1*60*24;
+	  }
+	  // -- this should match datastore entities
+	  $posts[$postid] = array('etime'=>$etime,'page'=>$page,'rank'=>(int)$rank,'postid'=>$postid,'title'=>$title,'url'=>$url,'points'=>(int)$points,'user'=>$user,'posttime'=>$posttime,'compare'=>'0');
 	} else {
-	  $posttime = '';
+	  header("HTTP/1.1 500 Internal Server Error");
+	  echo "Page element: ".$element->textContent;
 	}
-	// -- probably a hire post by ycombinator
-	if ( strlen($posttime) == 0 ) {
-	  $posttime = $points;
-	  $points = '0';
-	  $user = '';
-	}
-	// -- convert time to minutes
-	if ( preg_match('/minute/',$posttime) ) {
-	  $posttime = preg_replace('/ minutes?/','',$posttime)*1;
-	} elseif ( preg_match('/hour/',$posttime) ) {
-	  $posttime = preg_replace('/ hours?/','',$posttime)*1*60;
-	} elseif ( preg_match('/day/',$posttime) ) {
-	  $posttime = preg_replace('/ days?/','',$posttime)*1*60*24;
-	}
-	// -- this should match datastore entities
-	$posts[$postid] = array('etime'=>$etime,'page'=>$page,'rank'=>(int)$rank,'postid'=>$postid,'title'=>$title,'url'=>$url,'points'=>(int)$points,'user'=>$user,'posttime'=>$posttime,'compare'=>'0');
       }
     }
   }

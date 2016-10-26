@@ -43,7 +43,7 @@ function populate_graph_with_lines ( url, graph_id, click_callback ) {
       fields.splice(fields.indexOf('offset'),1);
       new Morris.Line({
         resize: true,
-        hideHover: true,
+        hideHover: false,
         element: graph_id,
         data: data,
         xkey: 'etime',

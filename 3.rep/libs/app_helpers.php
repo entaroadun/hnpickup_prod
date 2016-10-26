@@ -34,7 +34,13 @@ function get_hnposts ( $etimes, $hnposts, $offset, $page ) {
     $rows = $hnposts->fetchAll();
     usort($rows,function($a,$b){return(($a->rank<$b->rank)?-1:1);});
     foreach ( $rows as $row ) {
-      $table_rows[] = ['rank'=>$row->rank,'title'=>$row->title,'url'=>$row->url,'points'=>$row->points,'postid'=>$row->postid,'compare'=>$row->compare,'etime'=>$row->etime,'posttime'=>$row->posttime,'user'=>$row->user];
+      $url = $row->url;
+      // -- issue with HN internal links
+      if ( !preg_match('/^http/',$url) ) {
+	$url = 'https://news.ycombinator.com/'.$url;
+      }
+      // -- JSON payload
+      $table_rows[] = ['rank'=>$row->rank,'title'=>$row->title,'url'=>$url,'points'=>$row->points,'postid'=>$row->postid,'compare'=>$row->compare,'etime'=>$row->etime,'posttime'=>$row->posttime,'user'=>$row->user];
     }
   }
   // -----------------------
