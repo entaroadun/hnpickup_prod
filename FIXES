@@ -1,6 +1,7 @@
 Line 59 get_hnpost error -- GETTING TO KNOW THE ERROR
 Cookies, usernames, privacy statement -- ADDED UUID
 Issue with Ask HN (discussion only) -- FIXED
+nmp/bower (js package manager) -- FIXED
 Prev/next on table
 Intro page (maybe some counters at the top - README.md)
 Memcache number to timestamp data (push to all apps)
@@ -15,7 +16,6 @@ Download articles to nosql
 Best of the week (highest score + highest rank)
 Best of the month
 URL redirect translate or record
-nmp/bower (js package manager)
 use dc.js (https://dc-js.github.io/dc.js/)
 decompose "get_summary" in app_helpers
 add advertisements (ads program)
