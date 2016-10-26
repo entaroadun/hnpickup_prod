@@ -22,6 +22,7 @@
     "datatables-responsive": "^2.1.0",
     "font-awesome": "^4.6.3",
     "jquery": "^3.1.1",
-    "metisMenu": "^2.5.2"
+    "metisMenu": "^2.5.2",
+    "js-cookie": "^2.1.3"
   }
 }
