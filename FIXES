@@ -1,21 +1,22 @@
 Line 59 get_hnpost error -- GETTING TO KNOW THE ERROR
-Cookies, usernames, privacy statement -- ADDED UUID
+Cookies, usernames, privacy statement -- ADDED SUID
 Issue with Ask HN (discussion only) -- FIXED
 nmp/bower (js package manager) -- FIXED
-Prev/next on table
-Intro page (maybe some counters at the top - README.md)
+Intro page (maybe some counters at the top - README.md) -- FIXED
+Prev/next on table (jquery async)
+URL shortener needed (max 1500 chars)
+add advertisements (ads program)
 Memcache number to timestamp data (push to all apps)
-Memcache jsons by etime
-Morrisjs sync time with vis and table
+Memcache jsons by etime (because we have number to etime)
+Morrisjs sync time with vis and table (prev/next)
 Show max story (color coding)
 1st and 2nd derivate (best time prediction)
-smoothing (3 - maybe a visual in JS)
-Last 1 day, 1 h, 1 week, 1 month (maybe a visual)
-Wikipedia semantic comparison
-Download articles to nosql
+smoothing (3 - maybe a visual in JS, options in HTML)
+Last 1 day, 1 h, 1 week, 1 month (maybe options in HTML)
 Best of the week (highest score + highest rank)
-Best of the month
-URL redirect translate or record
+Best of the month (highest score + highest rank)
+URL redirect translate or record (SUID, URL, etime, back to the page)
 use dc.js (https://dc-js.github.io/dc.js/)
 decompose "get_summary" in app_helpers
-add advertisements (ads program)
+Wikipedia semantic comparison (separate app)
+Download articles to nosql (maybe)

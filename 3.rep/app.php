@@ -13,7 +13,9 @@ require_once(__DIR__.'/libs/app_helpers.php');
 // =========================
 
 $APP = new Silex\Application();
+$MD = new Parsedown();
 $APP->register(new Silex\Provider\TwigServiceProvider());
+$APP['md'] = $MD;
 $APP['twig.path'] = [ __DIR__.'/templates' ];
 $APP['hnposts'] = ( $_SERVER['SERVER_NAME'] === 'localhost' ? new \GDS\Store('HNPOSTS',new \GDS\Gateway\RESTv1('hnpickup')) : new \GDS\Store('HNPOSTS') );
 $APP['summary'] = ( $_SERVER['SERVER_NAME'] === 'localhost' ? new \GDS\Store('HNPOSTS_SUMMARY',new \GDS\Gateway\RESTv1('hnpickup')) : new \GDS\Store('HNPOSTS_SUMMARY') );
@@ -22,7 +24,7 @@ $APP['etimes'] = ( $_SERVER['SERVER_NAME'] === 'localhost' ? new \GDS\Store('HNE
 // =========================
 
 $APP->get('/', function (Application $app, Request $request) {
-  return($app->redirect('/report/three'));
+  return($app->redirect('/report/intro'));
 });
 
 // =========================
@@ -56,6 +58,7 @@ $APP->get('/summary/{offset}/{limit}/{field}.json', function ( $offset, $limit, 
 });
 
 // =========================
+
 $APP->get('/report/three', function ( Application $app, Request $request ) {
   $params = $request->query->all();
   $params = hn_params_validation($params,['news_pickup_ratio'],['news','newest']);
@@ -76,6 +79,19 @@ $APP->get('/report/one', function ( Application $app, Request $request) {
   $params = $request->query->all();
   $params = hn_params_validation($params,['news_summary','newest_summary'],[]);
   return($app['twig']->render('one.html',array_merge(['report_name'=>'Hacker Line Charts'],$params)));
+});
+
+// =========================
+
+$APP->get('/report/intro', function ( Application $app, Request $request) {
+  $memcache = new Memcached;
+  // - - - - - - - - -
+  if ( !($readme = $memcache->get('readme')) ) {
+    $readme = file_get_contents('../README.md');
+    $readme = $app['md']->text($readme);
+    $memcache->set('readme',$readme);
+  }
+  return($app['twig']->render('intro.html',['report_name'=>'Introduction','readme'=>$readme]));
 });
 
 // =========================

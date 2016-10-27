@@ -69,7 +69,7 @@ function guid() {
 
 // ========================
 
-if ( !Cookies.get('uuid') ) {
-  Cookies.set('uuid',guid());
+if ( !Cookies.get('suid') ) {
+  Cookies.set('suid',guid());
 }
 
