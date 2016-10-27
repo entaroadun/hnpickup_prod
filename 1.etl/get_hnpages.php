@@ -60,7 +60,11 @@ function get_posts_from_dom ( $dom, $page, $etime ) {
 	  $postid = $element->getAttribute('id');
 	  $rank = preg_replace('/\.$/','',$element->childNodes->item(0)->childNodes->item(0)->textContent);
 	  $title = $element->childNodes->item(3)->childNodes->item(0)->textContent;
-	  $url = $element->childNodes->item(3)->childNodes->item(0)->getAttribute('href');
+	  if ( $element->childNodes->item(3)->childNodes->item(0) == XML_ELEMENT_NODE ) {
+	    $url = $element->childNodes->item(3)->childNodes->item(0)->getAttribute('href');
+	  } else {
+	    throw new Exception("Page element (url not a node): ".$dom->saveHTML($element));
+	  }
 	  $points = preg_replace('/ points?$/','',$element->nextSibling->childNodes->item(1)->childNodes->item(1)->textContent);
 	  $user = $element->nextSibling->childNodes->item(1)->childNodes->item(3)->textContent;
 	  // -- is this a hire post
@@ -86,8 +90,7 @@ function get_posts_from_dom ( $dom, $page, $etime ) {
 	  // -- this should match datastore entities
 	  $posts[$postid] = array('etime'=>$etime,'page'=>$page,'rank'=>(int)$rank,'postid'=>$postid,'title'=>$title,'url'=>$url,'points'=>(int)$points,'user'=>$user,'posttime'=>$posttime,'compare'=>'0');
 	} else {
-	  header("HTTP/1.1 500 Internal Server Error");
-	  echo "Page element: ".$element->textContent;
+	  throw new Exception("Page element (element not a node): ".$dom->saveHTML($element));
 	}
       }
     }
