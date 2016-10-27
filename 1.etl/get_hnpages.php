@@ -60,7 +60,7 @@ function get_posts_from_dom ( $dom, $page, $etime ) {
 	  $postid = $element->getAttribute('id');
 	  $rank = preg_replace('/\.$/','',$element->childNodes->item(0)->childNodes->item(0)->textContent);
 	  $title = $element->childNodes->item(3)->childNodes->item(0)->textContent;
-	  if ( $element->childNodes->item(3)->childNodes->item(0) == XML_ELEMENT_NODE ) {
+	  if ( $element->childNodes->item(3)->childNodes->item(0)->nodeType == XML_ELEMENT_NODE ) {
 	    $url = $element->childNodes->item(3)->childNodes->item(0)->getAttribute('href');
 	  } else {
 	    throw new Exception("Page element (url not a node): ".$dom->saveHTML($element));
