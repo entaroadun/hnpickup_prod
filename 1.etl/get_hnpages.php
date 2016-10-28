@@ -22,18 +22,18 @@ function get_dom_from_url ( $url ) {
 
   $dom = NULL;
   // -----------------------
-  $ch = curl_init(); 
+  $ch = curl_init();
   if ( !is_null($ch) ) {
     // -- this is convert to "url fetch" by GAE
-    curl_setopt($ch,CURLOPT_URL,$url); 
-    curl_setopt($ch,CURLOPT_RETURNTRANSFER,true); 
+    curl_setopt($ch,CURLOPT_URL,$url);
+    curl_setopt($ch,CURLOPT_RETURNTRANSFER,true);
     curl_setopt($ch,CURLOPT_SSL_VERIFYHOST,false);
     curl_setopt($ch,CURLOPT_SSL_VERIFYPEER,false);
-    $html = iconv('UTF-8','ASCII//TRANSLIT',curl_exec($ch)); 
-    curl_close($ch); 
+    $html = iconv('UTF-8','ASCII//TRANSLIT',curl_exec($ch));
+    curl_close($ch);
     // -- convert text to DOM structure
     if ( strlen($html) > 0 ) {
-      $dom = new domDocument; 
+      $dom = new domDocument;
       $internalErrors = libxml_use_internal_errors(true);
       $dom->loadHTML($html);
       libxml_use_internal_errors($internalErrors);
@@ -61,7 +61,11 @@ function get_posts_from_dom ( $dom, $page, $etime ) {
 	  $rank = preg_replace('/\.$/','',$element->childNodes->item(0)->childNodes->item(0)->textContent);
 	  $title = $element->childNodes->item(3)->childNodes->item(0)->textContent;
 	  if ( $element->childNodes->item(3)->childNodes->item(0)->nodeType == XML_ELEMENT_NODE ) {
+	    // -- typical article as link
 	    $url = $element->childNodes->item(3)->childNodes->item(0)->getAttribute('href');
+	  } else if ( $element->childNodes->item(4)->childNodes->item(0)->nodeType == XML_ELEMENT_NODE ) {
+	    // --  flagged article with some text before the link
+	    $url = $element->childNodes->item(4)->childNodes->item(0)->getAttribute('href');
 	  } else {
 	    throw new Exception("Page element (url not a node): ".$dom->saveHTML($element));
 	  }
@@ -97,7 +101,7 @@ function get_posts_from_dom ( $dom, $page, $etime ) {
   }
   // -----------------------
   return($posts);
-       
+
 }
 
 // =========================
@@ -191,7 +195,7 @@ function count_etimes_entires ( $hnetimes_ds, $hnposts_summary_ds, $etime ) {
   // -----------------------
   // -- get last entry
   $hnetimes_ds->query('SELECT * FROM HNETIMES ORDER BY etime DESC');
-  $latest_etime = $hnetimes_ds->fetchOne(); 
+  $latest_etime = $hnetimes_ds->fetchOne();
   $last_etime = $latest_etime->etime;
   $last_etimeid = $latest_etime->etimeid;
   if ( is_null($last_etime) || is_null($last_etimeid) ) {
