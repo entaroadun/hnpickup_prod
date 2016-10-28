@@ -23,7 +23,7 @@ $APP['etimes'] = ( $_SERVER['SERVER_NAME'] === 'localhost' ? new \GDS\Store('HNE
 
 // =========================
 
-$APP->get('/', function (Application $app, Request $request) {
+$APP->get('/', function ( Application $app, Request $request ) {
   return($app->redirect('/report/intro'));
 });
 
@@ -67,7 +67,7 @@ $APP->get('/report/three', function ( Application $app, Request $request ) {
 
 // =========================
 
-$APP->get('/report/two', function ( Application $app, Request $request) {
+$APP->get('/report/two', function ( Application $app, Request $request ) {
   $params = $request->query->all();
   $params = hn_params_validation($params,['news_summary'],['news']);
   return($app['twig']->render('two.html',array_merge(['report_name'=>'Hacker Rewind Tables'],$params)));
@@ -75,7 +75,7 @@ $APP->get('/report/two', function ( Application $app, Request $request) {
 
 // =========================
 
-$APP->get('/report/one', function ( Application $app, Request $request) {
+$APP->get('/report/one', function ( Application $app, Request $request ) {
   $params = $request->query->all();
   $params = hn_params_validation($params,['news_summary','newest_summary'],[]);
   return($app['twig']->render('one.html',array_merge(['report_name'=>'Hacker Line Charts'],$params)));
@@ -83,7 +83,7 @@ $APP->get('/report/one', function ( Application $app, Request $request) {
 
 // =========================
 
-$APP->get('/report/intro', function ( Application $app, Request $request) {
+$APP->get('/report/intro', function ( Application $app, Request $request ) {
   $memcache = new Memcached;
   // - - - - - - - - -
   if ( !($readme = $memcache->get('readme')) ) {
@@ -91,12 +91,25 @@ $APP->get('/report/intro', function ( Application $app, Request $request) {
     $readme = $app['md']->text($readme);
     $memcache->set('readme',$readme);
   }
+  // - - - - - - - - -
   return($app['twig']->render('intro.html',['report_name'=>'Introduction','readme'=>$readme]));
 });
 
 // =========================
 
-$APP->error(function (Exception $e, Request $request, $code) use ($APP) {
+$APP->get('/report/privacy', function ( Application $app, Request $request ) {
+  $cookies = $request->cookies;
+  if ( !$cookies->has('suid') ) {
+    $suid = '';
+  } else {
+    $suid = $cookies->get('suid');
+  }
+  return($app['twig']->render('privacy.html',['report_name'=>'Privacy Control','suid'=>$suid]));
+});
+
+// =========================
+
+$APP->error(function ( Exception $e, Request $request, $code ) use ($APP) {
   switch ( $code ) {
     case 404:
       $message = 'The requested page could not be found.';

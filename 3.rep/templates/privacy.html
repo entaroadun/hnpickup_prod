@@ -1,0 +1,24 @@
+{% extends "report.html" %} 
+            {% block views %}
+            <!-- /.row -->
+	    <div class="row">
+	      <div class="col-lg-12">
+	        <div class="panel panel-warning">
+	          <div class="panel-heading">
+	            Session Unique Identifier
+	          </div>
+	          <div class="panel-body">
+		    <div class="form-group has-warning">
+		      <label class="control-label" for="inputWarning">This is how your click history is uniquely identifiable in our database:</label>
+		      <input type="text" class="form-control" id="suid" value="{{ suid }}">
+		      <p class="help-block">If you want to erase the trace of your previous click history to this browser then you need to change it. 
+		      If you want to combine the click history between different browsers then enter your own unique ID in all of your browsers.</p>
+		    </div>
+		    <button type="button" class="btn btn-warning" onclick="Cookies.set('suid',$('#suid').val());">Update</button>
+	          </div>
+                </div>
+	      </div>
+              <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+	    {% endblock %}
