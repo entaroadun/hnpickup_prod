@@ -63,9 +63,6 @@ function get_posts_from_dom ( $dom, $page, $etime ) {
 	  if ( $element->childNodes->item(3)->childNodes->item(0)->nodeType == XML_ELEMENT_NODE ) {
 	    // -- typical article as link
 	    $url = $element->childNodes->item(3)->childNodes->item(0)->getAttribute('href');
-	  } else if ( $element->childNodes->item(4)->childNodes->item(0)->nodeType == XML_ELEMENT_NODE ) {
-	    // --  flagged article with some text before the link
-	    $url = $element->childNodes->item(4)->childNodes->item(0)->getAttribute('href');
 	  } else {
 	    throw new Exception("Page element (url not a node): ".$dom->saveHTML($element));
 	  }
@@ -234,6 +231,31 @@ function count_etimes_entires ( $hnetimes_ds, $hnposts_summary_ds, $etime ) {
 
 // =========================
 
+function memcache_hnetimes ( $hnetimes_ds ) {
+
+  $new_entires = 0;
+  $memcache = new Memcached;
+  // -----------------------
+  $hnetimes = $memcache->get('HNETIMES');
+  $last_etime = 0;
+  if ( !is_null($hnetimes) ) {
+    $last_etime = $hnetimes[count($hnetimes)-1][1];
+  }
+  $hnetimes_ds->query('SELECT * FROM HNETIMES WHERE etime > @last_etime ORDER BY etime ASC',['last_etime'=>intval($last_etime)]);
+  while ( $rows = $hnetimes_ds->fetchPage(50) ) {
+    foreach ( $rows as $row ) {
+      $hnetimes[] = [intval($row->etimeid),intval($row->etime)];
+      $new_entires++;
+    }
+  }
+  $memcache->set('HNETIMES',$hnetimes);
+  // -----------------------
+  return($new_entires);
+
+}
+
+// =========================
+
 $etime = time();
 syslog(LOG_INFO,"Starting at ".$etime);
 $hnposts_ds = create_connection('HNPOSTS');
@@ -261,9 +283,15 @@ $newest_inserted = insert_posts_into_datastore($newest_posts,$hnposts_ds);
 $summary_inserted = insert_posts_into_datastore($all_summary,$hnposts_summary_ds);
 echo "Inserted ".count($news_inserted)." news and ".count($newest_inserted)." newest posts with ".count($summary_inserted)." summary at time ".time()."...\n";
 syslog(LOG_INFO,"Inserted ".count($news_inserted)." news and ".count($newest_inserted)." newest posts with ".count($summary_inserted)." summary at time ".time()."...\n");
+
+// - - - - - - - - -
+
 $entry_counts = count_etimes_entires($hnetimes_ds,$hnposts_summary_ds,$etime);
 echo "Total entires $entry_counts ...\n";
 syslog(LOG_INFO,"Total entires $entry_counts ...\n");
+$new_entires = memcache_hnetimes($hnetimes_ds);
+echo "New entires $new_entires ...\n";
+syslog(LOG_INFO,"New entires $new_entires ...\n");
 
 // - - - - - - - - -
 
