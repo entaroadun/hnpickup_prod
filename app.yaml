@@ -16,5 +16,7 @@ handlers:
   static_dir: 4.stat/libs
 - url: /bower_components
   static_dir: bower_components
+- url: /tests
+  static_dir: 5.tests/html
 - url: /.*
   script: 3.rep/app.php

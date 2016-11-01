@@ -60,12 +60,18 @@ function get_posts_from_dom ( $dom, $page, $etime ) {
 	  $postid = $element->getAttribute('id');
 	  $rank = preg_replace('/\.$/','',$element->childNodes->item(0)->childNodes->item(0)->textContent);
 	  $title = $element->childNodes->item(3)->childNodes->item(0)->textContent;
-	  if ( $element->childNodes->item(3)->childNodes->item(0)->nodeType == XML_ELEMENT_NODE ) {
+	  // -- URL might get complicated
+	  if ( $element->childNodes->item(3)->nodeType == XML_ELEMENT_NODE && $element->childNodes->item(3)->childNodes->item(0)->nodeType == XML_ELEMENT_NODE ) {
 	    // -- typical article as link
 	    $url = $element->childNodes->item(3)->childNodes->item(0)->getAttribute('href');
+	  } else if ( $element->childNodes->item(4)->nodeType == XML_ELEMENT_NODE && $element->childNodes->item(4)->childNodes->item(1)->nodeType == XML_ELEMENT_NODE ) {
+	    // -- link preceeded by [dupe] or [flagged]
+	    $url = $element->childNodes->item(4)->childNodes->item(1)->getAttribute('href');
 	  } else {
+	    // -- unknown type of link
 	    throw new Exception("Page element (url not a node): ".$dom->saveHTML($element));
 	  }
+	  // -- rest of the HN post info
 	  $points = preg_replace('/ points?$/','',$element->nextSibling->childNodes->item(1)->childNodes->item(1)->textContent);
 	  $user = $element->nextSibling->childNodes->item(1)->childNodes->item(3)->textContent;
 	  // -- is this a hire post
