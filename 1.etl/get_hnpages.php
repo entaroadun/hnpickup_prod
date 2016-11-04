@@ -29,14 +29,18 @@ function get_dom_from_url ( $url ) {
     curl_setopt($ch,CURLOPT_RETURNTRANSFER,true);
     curl_setopt($ch,CURLOPT_SSL_VERIFYHOST,false);
     curl_setopt($ch,CURLOPT_SSL_VERIFYPEER,false);
-    $html = iconv('UTF-8','ASCII//TRANSLIT',curl_exec($ch));
+    $html = curl_exec($ch);
+    $new_html = iconv(mb_detect_encoding($html),'ASCII//TRANSLIT//IGNORE',$html);
+    $error = curl_error($ch);
     curl_close($ch);
     // -- convert text to DOM structure
-    if ( strlen($html) > 0 ) {
+    if ( strlen($new_html) > 0 ) {
       $dom = new domDocument;
       $internalErrors = libxml_use_internal_errors(true);
-      $dom->loadHTML($html);
+      $dom->loadHTML($new_html);
       libxml_use_internal_errors($internalErrors);
+    } else {
+      throw new Exception("Empty string from html length ".strlen($html).' and error '.$error);
     }
   }
   // -----------------------
@@ -59,19 +63,11 @@ function get_posts_from_dom ( $dom, $page, $etime ) {
 	  // -- basic HN post information
 	  $postid = $element->getAttribute('id');
 	  $rank = preg_replace('/\.$/','',$element->childNodes->item(0)->childNodes->item(0)->textContent);
-	  $title = $element->childNodes->item(3)->childNodes->item(0)->textContent;
-	  // -- URL might get complicated
-	  if ( $element->childNodes->item(3)->nodeType == XML_ELEMENT_NODE && $element->childNodes->item(3)->childNodes->item(0)->nodeType == XML_ELEMENT_NODE ) {
-	    // -- typical article as link
-	    $url = $element->childNodes->item(3)->childNodes->item(0)->getAttribute('href');
-	  } else if ( $element->childNodes->item(4)->nodeType == XML_ELEMENT_NODE && $element->childNodes->item(4)->childNodes->item(1)->nodeType == XML_ELEMENT_NODE ) {
-	    // -- link preceeded by [dupe] or [flagged]
-	    $url = $element->childNodes->item(4)->childNodes->item(1)->getAttribute('href');
-	  } else {
-	    // -- unknown type of link
-	    throw new Exception("Page element (url not a node): ".$dom->saveHTML($element));
-	  }
-	  // -- rest of the HN post info
+	  $new = new DomDocument;
+	  $new->appendChild($new->importNode($element,true));
+	  $new = new DomXPath($new);
+	  $title = $new->query("//a[@class='storylink']")->item(0)->textContent;
+	  $url = $new->query("//a[@class='storylink']")->item(0)->getAttribute('href');
 	  $points = preg_replace('/ points?$/','',$element->nextSibling->childNodes->item(1)->childNodes->item(1)->textContent);
 	  $user = $element->nextSibling->childNodes->item(1)->childNodes->item(3)->textContent;
 	  // -- is this a hire post
