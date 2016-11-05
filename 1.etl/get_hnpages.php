@@ -26,12 +26,19 @@ function get_dom_from_url ( $url ) {
   if ( !is_null($ch) ) {
     // -- this is convert to "url fetch" by GAE
     curl_setopt($ch,CURLOPT_URL,$url);
+    curl_setopt($ch,CURLOPT_HEADER,true);
+    curl_setopt($ch,CURLOPT_HTTPGET,true);
     curl_setopt($ch,CURLOPT_RETURNTRANSFER,true);
     curl_setopt($ch,CURLOPT_SSL_VERIFYHOST,false);
     curl_setopt($ch,CURLOPT_SSL_VERIFYPEER,false);
+    curl_setopt($ch,CURLOPT_IPRESOLVE,CURL_IPRESOLVE_V4);
+    curl_setopt($ch,CURLOPT_DNS_USE_GLOBAL_CACHE,false);
+    curl_setopt($ch,CURLOPT_DNS_CACHE_TIMEOUT,2);
     $html = curl_exec($ch);
-    $new_html = iconv(mb_detect_encoding($html),'ASCII//TRANSLIT//IGNORE',$html);
+    $new_html = iconv('UTF-8','ASCII//TRANSLIT//IGNORE',$html);
+    // -- extra stuff for debugging
     $error = curl_error($ch);
+    $info = curl_getinfo($ch);
     curl_close($ch);
     // -- convert text to DOM structure
     if ( strlen($new_html) > 0 ) {
@@ -40,6 +47,7 @@ function get_dom_from_url ( $url ) {
       $dom->loadHTML($new_html);
       libxml_use_internal_errors($internalErrors);
     } else {
+      var_dump($info);
       throw new Exception("Empty string from html length ".strlen($html).' and error '.$error);
     }
   }
