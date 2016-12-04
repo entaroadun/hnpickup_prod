@@ -1,11 +1,15 @@
 Line 59 get_hnpost error -- GETTING TO KNOW THE ERROR - MORE
-add advertisements (ads program) -- WORKING ON
 Prev/next on table (jquery async)
+Check etime memcache (share code with ETL)
 Memcache number to timestamp data (push to all apps)
 Memcache jsons by etime (because we have number to etime)
 URL shortener needed (max 1500 chars)
 
+Add number of posts in ETL (get_hnposts.php - restart data collection)
+Add max post flag in ETL (restart data collection)
 Morrisjs sync time with vis and table (prev/next)
+Click recorder (separate app)
+Get payments (AcceptOn.com)
 Show max story (color coding)
 1st and 2nd derivate (best time prediction)
 smoothing (3 - maybe a visual in JS, options in HTML)
@@ -17,6 +21,7 @@ use dc.js (https://dc-js.github.io/dc.js/)
 decompose "get_summary" in app_helpers
 Wikipedia semantic comparison (separate app)
 Download articles to nosql (maybe)
+add advertisements (ads program) -- NOT WORKING TOO WELL
 
 Cookies, usernames, privacy statement -- FIXED
 Issue with Ask HN (discussion only) -- FIXED
