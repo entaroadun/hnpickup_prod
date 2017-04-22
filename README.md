@@ -40,5 +40,5 @@ This app collects personal data. But this can be scrambled by manipulating Sessi
 
 ### Screenshot ###
 
-[App Screenshot](https://raw.githubusercontent.com/entaroadun/hnpickup_prod/screenshots/app_screenshot.png)
+![App Screenshot](https://raw.githubusercontent.com/entaroadun/hnpickup_prod/screenshots/app_screenshot.png)
 
