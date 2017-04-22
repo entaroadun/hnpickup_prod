@@ -38,3 +38,7 @@ If all three parts are in a perfect harmony then we should get those glorified *
 
 This app collects personal data. But this can be scrambled by manipulating Session Unique Identifier (SUID).
 
+### Screenshot ###
+
+[App Screenshot](https://raw.githubusercontent.com/entaroadun/hnpickup_prod/screenshots/app_screenshot.png)
+
